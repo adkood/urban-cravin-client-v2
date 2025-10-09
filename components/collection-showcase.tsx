@@ -1,34 +1,6 @@
-const TrendingCollections = () => {
-  const collections = [
-    {
-      id: 1,
-      category: 'STYLE ESSENTIALS',
-      title: 'CAPS',
-      buttonText: 'SHOP NOW',
-      image: 'https://cdn.shopify.com/s/files/1/1368/3463/files/fall_3x4_17e597b0-9bd9-4e13-8f81-5cb00668a186.jpg?v=1758309664&width=600&height=800&crop=center',
-      link: '/collections/mens-fall-2025',
-      alt: 'Man wearing a pink cap'
-    },
-    {
-      id: 2,
-      category: 'COLLECTIBLES',
-      title: 'ASHTRAYS',
-      buttonText: 'SHOP NOW',
-      image: 'https://cdn.shopify.com/s/files/1/1368/3463/files/Floating_-_Cadet_Blue_Hyperloop_Overshirt_-_02.jpg?v=1758581543&width=600&height=800&crop=center',
-      link: '/products/hyperloop-overshirt-cadet-blue',
-      alt: 'Black ashtray in hand'
-    },
-    {
-      id: 3,
-      category: 'EXCLUSIVE',
-      title: 'WOMENSWEAR',
-      buttonText: 'SHOP HERE',
-      image: 'https://cdn.shopify.com/s/files/1/1368/3463/files/jarren_duran_hero_mobile.jpg?v=1742837889&width=600&height=800&crop=center',
-      link: '/collections/jarren-duran',
-      alt: 'Woman wearing pink t-shirt and plaid skirt'
-    }
-  ];
+import { collections } from "@/lib/constants";
 
+const TrendingCollections = () => {
   return (
     <section className="w-full bg-white py-8 md:py-12">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
