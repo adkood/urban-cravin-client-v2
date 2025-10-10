@@ -1,7 +1,7 @@
 import { ProductType } from "@/components/cards/product-card";
 import { DHHProductShocase } from "@/components/fav-clothing-caraousel";
 
-export const navItems = [
+export const NAV_ITEMS = [
     { label: 'OUR LAST SALE', badge: 'HOT' },
     { label: 'EYEWEAR', hasDropdown: true },
     { label: 'HATS & CAPS', hasDropdown: true },
@@ -22,7 +22,7 @@ export const TOP_HEADER_MARQUEE_ITEMS = [
   "BUY NOW",
 ];
 
-export const collections = [
+export const COLLECTIONS = [
   {
     id: 1,
     category: 'STYLE ESSENTIALS',
@@ -241,4 +241,61 @@ export const DHH_SHOWCASE_LISTING : DHHProductShocase[] = [
         "/webp tshirt/kenny.jpg",
       link: "/products/hudson-aran-jumper",
     },
-  ];
+];
+
+export const TESTIMONIALS = [
+  {
+    name: "Aarav Mehta",
+    username: "@aaravmehta",
+    avatar: "https://www.material-tailwind.com/img/avatar1.jpg",
+    content:
+      "The fit is insane — comfy, clean, and just the right amount of street. Wore it once, and now it’s my everyday flex. 🔥",
+    date: "Aug 03, 2025",
+    verified: true,
+  },
+  {
+    name: "Tanya Kapoor",
+    username: "@tanyakapoor",
+    avatar: "https://www.material-tailwind.com/image/avatar4.jpg",
+    content:
+      "Love how minimal yet bold their designs are. The fabric feels premium and the colours hit just right. Perfect for all-day wear. ✨",
+    date: "Sep 15, 2025",
+    verified: true,
+  },
+  {
+    name: "Kabir Sharma",
+    username: "@kabirshrm",
+    avatar: "https://www.material-tailwind.com/image/avatar8.svg",
+    content:
+      "Honestly, didn’t expect this quality at this price. The oversized tees and cargos are next level — easily my go-to brand now. 😎",
+    date: "Aug 28, 2025",
+    verified: true,
+  },
+  {
+    name: "Isha Nair",
+    username: "@ishanair",
+    avatar: "https://www.material-tailwind.com/img/avatar3.jpg",
+    content:
+      "Every drop feels fresh and different. I’ve been stopped multiple times asking where I got my hoodie from. That says it all. 💯",
+    date: "Jul 12, 2025",
+    verified: true,
+  },
+  {
+    name: "Rohan Patel",
+    username: "@rohanptl",
+    avatar: "https://www.material-tailwind.com/image/avatar2.jpg",
+    content:
+      "Urban, clean, and confident — exactly how I like to dress. The quality and vibe make it worth every penny. 👌",
+    date: "Aug 19, 2025",
+    verified: true,
+  },
+  {
+    name: "Simran Kaur",
+    username: "@simrankaurr",
+    avatar: "https://www.material-tailwind.com/image/avatar5.jpg",
+    content:
+      "From the stitching to the silhouette, everything feels thoughtfully made. It’s giving luxury streetwear energy. 🖤",
+    date: "Sep 05, 2025",
+    verified: true,
+  },
+];

@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DHH_SHOWCASE_LISTING as products } from "@/lib/constants";
+import GlareHover from "./ui/GlareHover";
 
 export interface DHHProductShocase {
   id: number;
@@ -108,16 +109,28 @@ const FeaturedProductsCarousel: React.FC = () => {
                   <span className="absolute top-0 left-0 text-xs uppercase tracking-widest font-mono text-gray-600">
                     DHH Collection
                   </span>
+
+                  <GlareHover
+                    glareColor="#ffffff"
+                    glareOpacity={0.3}
+                    glareAngle={-30}
+                    glareSize={300}
+                    transitionDuration={800}
+                    style={{ background : 'transparent', border : 'none'}}
+                    playOnce={false}
+                  >
                   
                   <a href={product.link} className="block text-center mt-12">
                     <img
                       src={product.productImage}
                       alt={product.name}
-                      className="w-full max-w-sm mx-auto mb-6 hover:scale-105 transition-transform duration-300"
+                      className="w-full max-w-sm mx-auto mb-6 transition-transform duration-300"
                     />
                     <h3 className="text-3xl font-semibold mb-3">{product.name}</h3>
                     <div className="text-xl font-medium text-gray-700">{product.price}</div>
                   </a>
+
+                </GlareHover>
                 </div>
               </div>
             </div>

@@ -1,5 +1,6 @@
 "use client";
-import { navItems } from '@/lib/constants';
+import { NAV_ITEMS as navItems } from '@/lib/constants';
+import { nunitoSans } from '@/lib/fonts';
 import { Search, User, Heart, ShoppingCart, Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -28,13 +29,14 @@ export default function Header() {
 
             {/* Logo */}
             <div className="flex-shrink-0">
-              <Image
-                src={'/logo.svg'}
-                width={200}
-                height={200}
-                alt="Urban Carvin Logo"
-                className="w-32 sm:w-48 md:w-56 lg:w-[300px] h-auto"
-              />
+              <h1 className={`${nunitoSans.className} text-[30px]`}>
+                URBAN 
+                <span
+                  className='text-[#9b1e22] mx-1'
+                >
+                  CRAVIN'
+                </span>
+                </h1>
             </div>
 
             {/* Desktop Search Bar */}
@@ -67,7 +69,7 @@ export default function Header() {
               </button>
               <button className="relative hover:opacity-70 transition-opacity">
                 <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6" />
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs">
+                <span className="absolute -top-2 -right-2 bg-[#9b1e22] text-white text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs">
                   0
                 </span>
               </button>
@@ -108,7 +110,7 @@ export default function Header() {
                       {item.badge && (
                         <span
                           className={`ml-2 ${
-                            item.badge === 'HOT' ? 'bg-[#ff0000]' : 'bg-[#ff0000]'
+                            item.badge === 'HOT' ? 'bg-[#9b1e22]' : 'bg-[#9b1e22]'
                           } text-white text-[7.5px] font-bold px-1.5 py-[0.2rem] rounded-full`}
                         >
                           {item.badge}
@@ -165,7 +167,7 @@ function Nav() {
                 {item.badge && (
                   <span
                     className={`absolute -top-[0.8rem] -right-4.5 ${
-                      item.badge === 'HOT' ? 'bg-[#ff0000]' : 'bg-[#ff0000]'
+                      item.badge === 'HOT' ? 'bg-[#9b1e22]' : 'bg-[#9b1e22]'
                     } text-white text-[7.5px] font-bold px-1.5 py-[0.2rem] rounded-full`}
                   >
                     {item.badge}
