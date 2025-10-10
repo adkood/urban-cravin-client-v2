@@ -1,122 +1,71 @@
-// components/Testimonials.tsx
 import React from 'react';
+import { TESTIMONIALS as testimonials } from '@/lib/constants';
+import AnimatedContent from './ui/AnimatedContent';
 
-interface Testimonial {
-  id: number;
-  text: string;
-  highlight: string;
-  author: {
-    name: string;
-    handle: string;
-    avatar: string;
-  };
-}
-
-const testimonials: Testimonial[] = [
-  {
-    id: 1,
-    text: "The progress tracker is fantastic. It's motivating to see how much I've improved over time. The app has a great mix of common and ",
-    highlight: "challenging",
-    author: {
-      name: "Fatima Khoury",
-      handle: "dlfatory_curtains_98",
-      avatar: "FK"
-    }
-  },
-  {
-    id: 2,
-    text: "The progress tracker is fantastic. It's motivating to see how much I've improved over time. The app has a great mix of common and ",
-    highlight: "challenging",
-    author: {
-      name: "Hassan Ali",
-      handle: "turbulent_unicorn_29",
-      avatar: "HA"
-    }
-  },
-  {
-    id: 3,
-    text: "The progress tracker is fantastic. It's motivating to see how much I've improved over time. The app has a great mix of common and ",
-    highlight: "challenging",
-    author: {
-      name: "Jorge Martínez",
-      handle: "nefarious_jellybeans_91",
-      avatar: "JM"
-    }
-  },
-  {
-    id: 4,
-    text: "The progress tracker is fantastic. It's motivating to see how much I've improved over time. The app has a great mix of common and ",
-    highlight: "challenging",
-    author: {
-      name: "Nicolás Sánchez",
-      handle: "pervasive_inker_83",
-      avatar: "NS"
-    }
-  },
-  {
-    id: 5,
-    text: "The progress tracker is fantastic. It's motivating to see how much I've improved over time. The app has a great mix of common and ",
-    highlight: "challenging",
-    author: {
-      name: "Noel Jensen",
-      handle: "nefarious_shop_47",
-      avatar: "NJ"
-    }
-  },
-  {
-    id: 6,
-    text: "The progress tracker is fantastic. It's motivating to see how much I've improved over time. The app has a great mix of common and ",
-    highlight: "challenging",
-    author: {
-      name: "Ahmad Khan",
-      handle: "antic_circus_76",
-      avatar: "AK"
-    }
-  }
-];
-
-export default function Testimonials() {
+export default function TestimonialGrid() {
   return (
-    <section className="py-16 px-5 bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+    <div className="min-h-screen bg-[#f8f8f8] py-12 px-4">
       <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
         <div className="text-center mb-16">
-          <span className="inline-block text-orange-500 border-2 border-orange-500 px-5 py-2 rounded-full text-xs font-semibold tracking-wider uppercase mb-5">
-            TESTIMONIALS
-          </span>
-          <h2 className="text-5xl font-bold text-gray-900">Our trusted clients</h2>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4">
+            What Our People Are Saying
+          </h2>
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+            see why our community can't get enough of our fits, comfort, and bold energy.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial) => (
-            <div
-              key={testimonial.id}
-              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-            > 
-              <p className="text-gray-700 text-base leading-relaxed mb-8">
-                {testimonial.text}
-                <span className="text-orange-500 font-semibold">
-                  {testimonial.highlight}
-                </span>
-                {" words."}
-              </p>
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {testimonials.map((testimonial, index) => (
+                <AnimatedContent
+                  distance={150}
+                  key={index}
+                  direction="vertical"
+                  reverse={false}
+                  duration={0.6}
+                  initialOpacity={0}
+                  animateOpacity
+                  scale={1.1}
+                  threshold={0.2}
+                  delay={0.2+0.1*index}
+                >
 
-              <div className="flex items-center gap-4 pt-5 border-t border-gray-100">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-white font-semibold text-lg">
-                  {testimonial.author.avatar}
-                </div>
+            <div 
+              className="relative flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all"
+              >
+              <div className="relative mt-4 mx-4 rounded-xl overflow-hidden bg-white flex gap-3 items-center">
+                <img 
+                  src={testimonial.avatar}
+                  alt={testimonial.name}
+                  className="inline-block relative object-cover object-center rounded-full w-14 h-14"
+                  />
                 <div>
-                  <h4 className="font-semibold text-gray-900 text-base">
-                    {testimonial.author.name}
-                  </h4>
-                  <p className="text-gray-500 text-sm">
-                    {testimonial.author.handle}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <h6 className="text-base font-semibold text-gray-900">
+                      {testimonial.name}
+                    </h6>
+                  </div>
                 </div>
               </div>
+
+              <div className="p-6 px-4 flex-grow">
+                <p className="text-base font-normal text-gray-600 italic leading-relaxed">
+                  “{testimonial.content}”
+                </p>
+              </div>
+
+              <div className="p-6 flex justify-between items-center text-gray-500 text-sm">
+                <span>{testimonial.date}</span>
+                <span className="font-medium uppercase tracking-wide text-gray-800">
+                  Verified Buyer
+                </span>
+              </div>
             </div>
+                  </AnimatedContent>
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }
