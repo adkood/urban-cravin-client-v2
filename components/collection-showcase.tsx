@@ -13,12 +13,12 @@ const TrendingCollections = () => {
               key={collection.id}
               direction="vertical"
               reverse={false}
-              duration={0.6}
+              duration={0.8}
               initialOpacity={0}
               animateOpacity
               scale={1.1}
               threshold={0.2}
-              delay={0.2}
+              delay={0.3}
             >
                         <a
                           
