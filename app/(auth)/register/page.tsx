@@ -7,33 +7,43 @@ import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { LOGINURL } from "@/lib/urls";
+import { REGISTERURL } from "@/lib/urls";
 import { toast } from "sonner";
 
-const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .max(25, "Password is too long"),
-});
+const signupSchema = z
+  .object({
+    name: z.string().min(1, "Name is required"),
+    email: z.string().email("Invalid email address"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .max(25, "Password is too long"),
+    
+  })
 
-type LoginFormValues = z.infer<typeof loginSchema>;
+type SignupFormValues = z.infer<typeof signupSchema>;
 
-const Login = () => {
+const Signup = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const formik = useFormik<LoginFormValues>({
-    initialValues: { email: "", password: "" },
-    validationSchema: toFormikValidationSchema(loginSchema),
+  const formik = useFormik<SignupFormValues>({
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+    validationSchema: toFormikValidationSchema(signupSchema),
     onSubmit: async (values) => {
       try {
-        await axios.post(LOGINURL, values);
-        toast.success("Welcome back!");
-        router.push("/");
+        await axios.post(REGISTERURL, values, {
+          headers: { "Content-Type": "application/json" },
+        });
+        toast.success("Registered Successfully");
+        router.push("/login");
       } catch (error) {
-        toast.error("Invalid credentials");
+        toast.error("Registration failed");
       }
     },
   });
@@ -41,7 +51,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f8f8f8] px-4 py-10">
       <div className="w-full max-w-md bg-white rounded-md shadow-[0_6px_24px_rgba(0,0,0,0.08)] border border-gray-100 p-8 sm:p-10">
-        {/* Logo / Title */}
+        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">
             URBAN{" "}
@@ -50,12 +60,36 @@ const Login = () => {
             </span>
           </h1>
           <p className="text-gray-500 text-sm mt-2">
-            Sign in to explore the latest drops and exclusive fits.
+            Create your account to unlock the latest fits and exclusive drops.
           </p>
         </div>
 
         {/* Form */}
         <form onSubmit={formik.handleSubmit} className="space-y-6">
+          {/* Name */}
+          <div>
+            <label
+              htmlFor="name"
+              className="block text-sm font-semibold text-gray-700 mb-2"
+            >
+              Full Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              {...formik.getFieldProps("name")}
+              placeholder="Enter your full name"
+              className={`w-full px-4 py-3 text-sm border ${
+                formik.touched.name && formik.errors.name
+                  ? "border-red-500"
+                  : "border-gray-300"
+              } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b1e22] transition-all placeholder:text-gray-400`}
+            />
+            {formik.touched.name && formik.errors.name && (
+              <p className="mt-1 text-xs text-red-600">{formik.errors.name}</p>
+            )}
+          </div>
+
           {/* Email */}
           <div>
             <label
@@ -68,17 +102,15 @@ const Login = () => {
               id="email"
               type="email"
               {...formik.getFieldProps("email")}
+              placeholder="you@example.com"
               className={`w-full px-4 py-3 text-sm border ${
                 formik.touched.email && formik.errors.email
                   ? "border-red-500"
                   : "border-gray-300"
               } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b1e22] transition-all placeholder:text-gray-400`}
-              placeholder="you@example.com"
             />
             {formik.touched.email && formik.errors.email && (
-              <p className="mt-1 text-xs text-red-600">
-                {formik.errors.email}
-              </p>
+              <p className="mt-1 text-xs text-red-600">{formik.errors.email}</p>
             )}
           </div>
 
@@ -95,12 +127,12 @@ const Login = () => {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 {...formik.getFieldProps("password")}
-                className={`w-full px-4 py-3 text-sm border ${
+                placeholder="••••••••"
+                className={`w-full px-4 py-3 pr-12 text-sm border ${
                   formik.touched.password && formik.errors.password
                     ? "border-red-500"
                     : "border-gray-300"
                 } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b1e22] transition-all placeholder:text-gray-400`}
-                placeholder="••••••••"
               />
               <button
                 type="button"
@@ -121,36 +153,23 @@ const Login = () => {
             )}
           </div>
 
-          {/* Forgot password */}
-          <div className="flex justify-end">
-            <Link
-              href="/forgot-password"
-              className="text-sm text-[#9b1e22] font-medium hover:underline"
-            >
-              Forgot password?
-            </Link>
-          </div>
-
-          {/* Submit button */}
           <button
             type="submit"
             className="w-full py-3 bg-[#9b1e22] text-white text-sm font-semibold rounded-lg shadow-sm hover:bg-[#7d171b] active:scale-[0.98] transition-all duration-150"
           >
-            Sign In
+            Create Account
           </button>
         </form>
 
-        {/* Divider */}
         <div className="my-6 h-px bg-gray-200" />
 
-        {/* Sign up */}
         <p className="text-center text-sm text-gray-600">
-          New here?{" "}
+          Already have an account?{" "}
           <Link
-            href="/register"
+            href="/login"
             className="text-[#9b1e22] font-semibold hover:underline"
           >
-            Create an account
+            Log in
           </Link>
         </p>
       </div>
@@ -158,4 +177,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
