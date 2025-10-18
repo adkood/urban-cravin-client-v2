@@ -3,7 +3,7 @@ import React from 'react';
 import AnimatedContent from '../ui/AnimatedContent';
 
 export type ProductType = {
-  id: number;
+  id: number | string;
   name: string;
   price: number;
   image: string;
@@ -14,7 +14,7 @@ export type ProductType = {
   reviews: number;
 };
 
-const toggleFavorite = (id: number) => {
+const toggleFavorite = (id: number | string) => {
     // Add your favorite toggle logic here
 };
 
@@ -60,7 +60,7 @@ const ProductCard = ({
           >
             <Heart
               className={`w-5 h-5 ${
-                product.id % 2 == 0 
+                (product.id + "").length % 2 == 0 
                   ? 'fill-red-500 stroke-red-500'
                   : 'stroke-gray-700'
               }`}
