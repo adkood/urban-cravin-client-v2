@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DHH_SHOWCASE_LISTING as products } from "@/lib/constants";
 import GlareHover from "./ui/GlareHover";
+import Link from "next/link";
 
 export interface DHHProductShocase {
   id: number;
@@ -74,7 +75,7 @@ const FeaturedProductsCarousel: React.FC = () => {
   };
 
   return (
-    <section className="relative w-full h-screen overflow-hidden ">
+ <section className="relative w-full h-screen overflow-hidden">
       <div
         ref={scrollRef}
         className="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide"
@@ -87,77 +88,85 @@ const FeaturedProductsCarousel: React.FC = () => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleDragEnd}
       >
-        {products.map((product) => (
-          <div key={product.id} className="relative flex-shrink-0 w-full h-full snap-start">
-            <div className="flex w-full h-full">
-              {/* Left Half - Background Image */}
-              <div className="w-1/2 h-full overflow-hidden">
-                <img 
-                  src={product.backgroundImage} 
-                  alt="" 
-                  className="w-full h-full object-contain"
-                />
-              </div>
+        {products.map((product,index) => (
+<div
+  key={product.id}
+  className="relative flex-shrink-0 w-full items-center justify-center h-auto snap-start bg-white overflow-hidden shadow-sm"
+>
+  <div className="flex flex-col md:flex-row w-full h-full">
+    <div className="w-full md:w-1/2 h-56 sm:h-72 md:h-auto overflow-hidden">
+      <img
+        src={product.backgroundImage}
+        alt={product.name}
+        className={`w-full h-full ${index <= 1 ? "object-top" : null} object-cover md:object-contain`}
+      />
+    </div>
 
-              {/* Right Half - Product Card */}
-              <div className="w-1/2 h-full flex items-center justify-center bg-white p-8">
-                <div className="relative w-full max-w-md">
-                  <div
-                    className="absolute top-0 right-0 w-8 h-8 bg-gray-100"
-                    style={{ clipPath: "polygon(100% 0, 0 0, 100% 100%)" }}
-                  />
-                  <span className="absolute top-0 left-0 text-xs uppercase tracking-widest font-mono text-gray-600">
-                    DHH Collection
-                  </span>
+    <div className="w-full md:w-1/2 flex items-center justify-center bg-white py-4 sm:p-2 md:p-10">
+      <div className="relative w-full text-center">
+        <div
+          className="absolute top-0 right-0 w-6 h-6 sm:w-8 sm:h-8 bg-gray-100"
+          style={{ clipPath: "polygon(100% 0, 0 0, 100% 100%)" }}
+        />
 
-                  <GlareHover
-                    glareColor="#ffffff"
-                    glareOpacity={0.3}
-                    glareAngle={-30}
-                    glareSize={300}
-                    transitionDuration={800}
-                    style={{ background : 'transparent', border : 'none'}}
-                    playOnce={false}
-                  >
-                  
-                  <a href={product.link} className="block text-center mt-12">
-                    <img
-                      src={product.productImage}
-                      alt={product.name}
-                      className="w-full max-w-sm mx-auto mb-6 transition-transform duration-300"
-                    />
-                    <h3 className="text-3xl font-semibold mb-3">{product.name}</h3>
-                    <div className="text-xl font-medium text-gray-700">{product.price}</div>
-                  </a>
+        <span className="absolute top-0 left-0 text-[10px] sm:text-xs uppercase tracking-widest font-mono text-gray-500">
+          DHH Collection
+        </span>
 
-                </GlareHover>
-                </div>
-              </div>
+        <GlareHover
+          glareColor="#ffffff"
+          glareOpacity={0.3}
+          glareAngle={-30}
+          glareSize={300}
+          transitionDuration={800}
+          style={{ background: "transparent", border: "none" }}
+          playOnce={false}
+        >
+          <Link
+            href={product.link}
+            className="block mt-6 md:mt-12"
+          >
+            <img
+              src={product.productImage}
+              alt={product.name}
+              className="w-60 sm:w-56 md:w-64 mx-auto mb-4 sm:mb-6 transition-transform duration-300 hover:scale-105"
+            />
+            <h3 className="text-md sm:text-xl md:text-2xl font-semibold mb-1 sm:mb-2 text-gray-800">
+              {product.name}
+            </h3>
+            <div className="text-base sm:text-lg font-medium text-gray-700">
+              {product.price}
             </div>
-          </div>
+          </Link>
+        </GlareHover>
+      </div>
+    </div>
+  </div>
+</div>
+
         ))}
       </div>
 
-      {/* Navigation Controls */}
-      <div className="absolute top-1/2 left-0 right-0 flex justify-between px-8 pointer-events-none -translate-y-1/2">
+      {/* Navigation Controls - Hidden on mobile */}
+      <div className="hidden md:flex absolute top-1/2 left-0 right-0 justify-between px-4 lg:px-8 pointer-events-none -translate-y-1/2">
         <button 
           onClick={goPrev} 
-          className="p-3 bg-white/90 rounded-full shadow-lg hover:bg-white transition-colors pointer-events-auto"
+          className="p-2 lg:p-3 bg-white/90 rounded-full shadow-lg hover:bg-white transition-colors pointer-events-auto"
           aria-label="Previous"
         >
-          <ChevronLeft className="w-6 h-6 text-gray-800" />
+          <ChevronLeft className="w-5 h-5 lg:w-6 lg:h-6 text-gray-800" />
         </button>
         <button 
           onClick={goNext} 
-          className="p-3 bg-white/90 rounded-full shadow-lg hover:bg-white transition-colors pointer-events-auto"
+          className="p-2 lg:p-3 bg-white/90 rounded-full shadow-lg hover:bg-white transition-colors pointer-events-auto"
           aria-label="Next"
         >
-          <ChevronRight className="w-6 h-6 text-gray-800" />
+          <ChevronRight className="w-5 h-5 lg:w-6 lg:h-6 text-gray-800" />
         </button>
       </div>
 
       {/* Pagination Dots */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2.5">
+      <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 flex gap-2 sm:gap-2.5">
         {products.map((_, index) => (
           <button
             key={index}

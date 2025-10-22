@@ -123,7 +123,7 @@ export const First_PRODUCT_LIST : ProductType[] = [
 
 export const LAST_PRODUCT_LIST : ProductType[] = [
   {
-    id: 1,
+    id: 7,
     name: 'Spirited soul',
     price: 151,
     image: '/4_20251007_172157_0003-scaled.png',
@@ -134,7 +134,7 @@ export const LAST_PRODUCT_LIST : ProductType[] = [
     reviews : 124
   },
   {
-    id: 3,
+    id: 8,
     name: 'Heavy Bite',
     price: 267,
     image: 'https://urbancravin.com/wp-content/uploads/al_opt_content/IMAGE/urbancravin.com/wp-content/uploads/2025/09/1_20250925_194418_0000.png.bv.webp?bv_host=urbancravin.com',
@@ -145,7 +145,7 @@ export const LAST_PRODUCT_LIST : ProductType[] = [
     reviews : 124
   },
   {
-    id: 2,
+    id: 9,
     name: 'Porsche 911 GT3',
     price: 151,
     image: '/5_20251007_172157_0004-scaled.png',
@@ -156,7 +156,7 @@ export const LAST_PRODUCT_LIST : ProductType[] = [
     reviews : 124
   },
   {
-    id: 4,
+    id: 10,
     name: 'Spirited soul',
     price: 151,
     image: '/4_20251007_172157_0003-scaled.png',
@@ -167,7 +167,7 @@ export const LAST_PRODUCT_LIST : ProductType[] = [
     reviews : 124
   },
   {
-    id: 5,
+    id: 11,
     name: 'Heavy Bite',
     price: 267,
     image: 'https://urbancravin.com/wp-content/uploads/al_opt_content/IMAGE/urbancravin.com/wp-content/uploads/2025/09/1_20250925_194418_0000.png.bv.webp?bv_host=urbancravin.com',
@@ -178,7 +178,7 @@ export const LAST_PRODUCT_LIST : ProductType[] = [
     reviews : 124
   },
   {
-    id: 6,
+    id: 12,
     name: 'Porsche 911 GT3',
     price: 151,
     image: '/5_20251007_172157_0004-scaled.png',

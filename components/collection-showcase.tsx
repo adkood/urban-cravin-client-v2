@@ -1,5 +1,6 @@
 import { COLLECTIONS as collections } from "@/lib/constants";
 import AnimatedContent from "./ui/AnimatedContent";
+import Link from "next/link";
 
 const TrendingCollections = () => {
   return (
@@ -20,9 +21,7 @@ const TrendingCollections = () => {
               threshold={0.2}
               delay={0.3}
             >
-                        <a
-                          
-                          href={collection.link}
+                        <div
                           className="relative block overflow-hidden group"
                         >
                           {/* Image */}
@@ -47,13 +46,13 @@ const TrendingCollections = () => {
                                 </h3>
                                 
                                 {/* Button */}
-                                <button className="bg-white text-black text-xs md:text-sm font-semibold tracking-wide px-6 py-2.5 md:px-8 md:py-3 hover:bg-gray-100 transition-colors duration-200">
+                                <Link href={`/collection/${collection.title}`} className="bg-white text-black text-xs md:text-sm font-semibold tracking-wide px-6 py-2.5 md:px-8 md:py-3 hover:bg-gray-100 transition-colors duration-200">
                                   {collection.buttonText}
-                                </button>
+                                </Link>
                               </div>
                             </div>
                           </div>
-                        </a>
+                        </div>
             </AnimatedContent>
 
           ))}

@@ -3,6 +3,7 @@ import { NAV_ITEMS as navItems } from '@/lib/constants';
 import { nunitoSans } from '@/lib/fonts';
 import { Search, User, Heart, ShoppingCart, Menu, X } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState } from 'react';
 
 export default function Header() {
@@ -28,7 +29,8 @@ export default function Header() {
             </button>
 
             {/* Logo */}
-            <div className="flex-shrink-0">
+            <Link href={"/"}>
+              <div className="flex-shrink-0">
               <h1 className={`${nunitoSans.className} text-[30px]`}>
                 URBAN 
                 <span
@@ -38,6 +40,7 @@ export default function Header() {
                 </span>
                 </h1>
             </div>
+            </Link>
 
             {/* Desktop Search Bar */}
             <div className="hidden md:flex flex-1 max-w-[600px]">

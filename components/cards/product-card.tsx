@@ -1,6 +1,7 @@
 import { Heart } from 'lucide-react';
 import React from 'react';
 import AnimatedContent from '../ui/AnimatedContent';
+import Link from 'next/link';
 
 export type ProductType = {
   id: number | string;
@@ -20,10 +21,12 @@ const toggleFavorite = (id: number | string) => {
 
 const ProductCard = ({
   product,
-  size
+  size,
+  isfull = false
 }: {
   size : 'tees' | 'pants'
   product: ProductType
+  isfull ?: boolean
 }) => {
   return (
     <AnimatedContent
@@ -40,7 +43,7 @@ const ProductCard = ({
     >
       <div
         key={product.id}
-        className="flex-none w-[calc(25%-18px)] min-w-[400px]"
+        className={`flex-none ${isfull ? "w-full" : "w-[calc(25%-18px)] min-w-[400px]"}`}
       >
         <div className="group relative bg-white rounded-lg overflow-hidden mb-4">
           <div className="absolute top-4 left-4 z-10">
@@ -67,6 +70,7 @@ const ProductCard = ({
             />
           </button>
 
+          <Link href={`/product/${product.id}`}>
           <img 
             src={product.image} 
             alt={product.name}
@@ -74,9 +78,12 @@ const ProductCard = ({
               size == 'tees' ? "aspect-[4/4]" : "aspect-auto"
             } w-full h-full object-cover group-hover:scale-105 transition-transform duration-300`}
           />
+          </Link>
         </div>
 
-        <h3 className="text-xl font-normal mb-1">{product.name}</h3>
+        <Link href={`/product/${product.id}`}>
+         <h3 className="text-xl font-normal mb-1">{product.name}</h3>
+        </Link>
         <p className="text-lg font-light mb-2">${product.price}</p>
 
         {product.rating && (
