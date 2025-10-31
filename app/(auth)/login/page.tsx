@@ -7,11 +7,13 @@ import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { LOGINURL } from "@/lib/urls";
+import { CLIENT_LOGINURL, LOGINURL } from "@/lib/urls";
 import { toast } from "sonner";
 
+
 const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  usernameOrEmail: z.string().min(8, "must be at least 2 characters")
+    .max(25, "it is too long"),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
@@ -25,15 +27,26 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const formik = useFormik<LoginFormValues>({
-    initialValues: { email: "", password: "" },
+    initialValues: { usernameOrEmail: "", password: "" },
     validationSchema: toFormikValidationSchema(loginSchema),
     onSubmit: async (values) => {
       try {
-        await axios.post(LOGINURL, values);
-        toast.success("Welcome back!");
-        router.push("/");
+        const resp = await axios.post<{
+          status : string
+          message : string
+        }>(CLIENT_LOGINURL, {
+          usernameOrEmail : values.usernameOrEmail,
+          password : values.password
+         });
+        if(resp.data.status.toLocaleLowerCase() == "success") {
+          toast.success("Welcome back!");
+          router.push("/");
+        }
+        else if (resp.data.status.toLocaleLowerCase() == "error"){
+          toast.error("Invalid Credentails!!");
+        }
       } catch (error) {
-        toast.error("Invalid credentials");
+        toast.error("Something went wrong!!");
       }
     },
   });
@@ -59,25 +72,25 @@ const Login = () => {
           {/* Email */}
           <div>
             <label
-              htmlFor="email"
+              htmlFor="usernameOrEmail"
               className="block text-sm font-semibold text-gray-700 mb-2"
             >
               Email
             </label>
             <input
-              id="email"
-              type="email"
-              {...formik.getFieldProps("email")}
+              id="usernameOrEmail"
+              type="text"
+              {...formik.getFieldProps("usernameOrEmail")}
               className={`w-full px-4 py-3 text-sm border ${
-                formik.touched.email && formik.errors.email
+                formik.touched.usernameOrEmail && formik.errors.usernameOrEmail
                   ? "border-red-500"
                   : "border-gray-300"
               } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b1e22] transition-all placeholder:text-gray-400`}
               placeholder="you@example.com"
             />
-            {formik.touched.email && formik.errors.email && (
+            {formik.touched.usernameOrEmail && formik.errors.usernameOrEmail && (
               <p className="mt-1 text-xs text-red-600">
-                {formik.errors.email}
+                {formik.errors.usernameOrEmail}
               </p>
             )}
           </div>

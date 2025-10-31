@@ -12,6 +12,7 @@ import SizeChart from "@/components/product/size-chart";
 import ProductFeatureCard from "@/components/showcase-card";
 import ProductReviews from "@/components/product/product-reviews";
 import RelatedProducts from "@/components/product/related-products";
+import { useCounterStore } from "@/providers/user-store-provider";
 
 type SizesType = "L" | "S" | "M"
 
@@ -73,6 +74,11 @@ export default function ProductPage() {
   const [showSizeChart, setShowSizeChart] = useState<boolean>(false)
 
   const discountedPrice = mockProduct.price - (mockProduct.discountAmount || 0)
+
+  const { count, incrementCount, decrementCount } = useCounterStore(
+    (state) => state,
+  )
+
 
 
   return (
@@ -232,7 +238,17 @@ export default function ProductPage() {
                     </div>
                 </div>
             </div>
-        </div>  
+        </div>
+        <div>
+      Count: {count}
+      <hr />
+      <button type="button" onClick={incrementCount}>
+        Increment Count
+      </button>
+      <button type="button" onClick={decrementCount}>
+        Decrement Count
+      </button>
+    </div>
         <RelatedProducts/>
         <ProductReviews />
         <Footer/>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { robotoMono } from "@/lib/fonts";
 import { Toaster } from "@/components/ui/sonner"
+import Provider from "./provider";
 
 
 export const metadata: Metadata = {
@@ -19,8 +20,10 @@ export default function RootLayout({
       <body
         className={`${robotoMono.className} antialiased w-full h-screen bg-white`}
       >
-        {children}
-        <Toaster />
+        <Provider>
+          {children}
+          <Toaster />
+        </Provider>
       </body>
     </html>
   );

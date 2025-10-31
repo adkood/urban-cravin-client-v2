@@ -7,12 +7,12 @@ import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { REGISTERURL } from "@/lib/urls";
+import { CLIENT_REGISTERURL } from "@/lib/urls";
 import { toast } from "sonner";
 
 const signupSchema = z
   .object({
-    name: z.string().min(1, "Name is required"),
+    username: z.string().min(1, "Name is required"),
     email: z.string().email("Invalid email address"),
     password: z
       .string()
@@ -30,18 +30,27 @@ const Signup = () => {
 
   const formik = useFormik<SignupFormValues>({
     initialValues: {
-      name: "",
+      username: "",
       email: "",
       password: "",
     },
     validationSchema: toFormikValidationSchema(signupSchema),
     onSubmit: async (values) => {
       try {
-        await axios.post(REGISTERURL, values, {
+        const resp = await axios.post<{
+          status : string
+          message : string
+        }>(CLIENT_REGISTERURL, values, {
           headers: { "Content-Type": "application/json" },
         });
-        toast.success("Registered Successfully");
-        router.push("/login");
+        if(resp.data.status.toLocaleLowerCase() == "success") {
+          toast.success("Registered Successfully!");
+          router.push("/");
+        }
+        else if (resp.data.status.toLocaleLowerCase() == "error"){
+          toast.error("Invalid Inputs!!");
+        }
+        router.push("/");
       } catch (error) {
         toast.error("Registration failed");
       }
@@ -69,24 +78,24 @@ const Signup = () => {
           {/* Name */}
           <div>
             <label
-              htmlFor="name"
+              htmlFor="username"
               className="block text-sm font-semibold text-gray-700 mb-2"
             >
               Full Name
             </label>
             <input
-              id="name"
+              id="username"
               type="text"
-              {...formik.getFieldProps("name")}
+              {...formik.getFieldProps("username")}
               placeholder="Enter your full name"
               className={`w-full px-4 py-3 text-sm border ${
-                formik.touched.name && formik.errors.name
+                formik.touched.username && formik.errors.username
                   ? "border-red-500"
                   : "border-gray-300"
               } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b1e22] transition-all placeholder:text-gray-400`}
             />
-            {formik.touched.name && formik.errors.name && (
-              <p className="mt-1 text-xs text-red-600">{formik.errors.name}</p>
+            {formik.touched.username && formik.errors.username && (
+              <p className="mt-1 text-xs text-red-600">{formik.errors.username}</p>
             )}
           </div>
 
