@@ -1,22 +1,22 @@
 "use client";
 import { NAV_ITEMS as navItems } from '@/lib/constants';
 import { nunitoSans } from '@/lib/fonts';
+import { useUserStore } from '@/providers/user-store-provider';
 import { Search, User, Heart, ShoppingCart, Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import UserAvatar from '../cards/user-profile';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-
+  
   return (
     <header className="w-full bg-white">
-      {/* Top Bar */}
       <div className="border-b border-gray-200">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-3 sm:gap-6">
-            {/* Mobile Menu Button */}
             <button
               className="lg:hidden hover:opacity-70 transition-opacity"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -28,7 +28,6 @@ export default function Header() {
               )}
             </button>
 
-            {/* Logo */}
             <Link href={"/"}>
               <div className="flex-shrink-0">
               <h1 className={`${nunitoSans.className} text-[30px]`}>
@@ -42,7 +41,6 @@ export default function Header() {
             </div>
             </Link>
 
-            {/* Desktop Search Bar */}
             <div className="hidden md:flex flex-1 max-w-[600px]">
               <div className="relative w-full">
                 <input
@@ -54,9 +52,7 @@ export default function Header() {
               </div>
             </div>
 
-            {/* Icons */}
             <div className="flex items-center gap-3 sm:gap-5">
-              {/* Mobile Search Toggle */}
               <button
                 className="md:hidden hover:opacity-70 transition-opacity"
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -65,21 +61,20 @@ export default function Header() {
               </button>
 
               <button className="hidden sm:block hover:opacity-70 transition-opacity">
-                <User className="w-5 h-5 sm:w-6 sm:h-6" />
+                <UserAvatar/>
               </button>
               <button className="hidden sm:block hover:opacity-70 transition-opacity">
                 <Heart className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
-              <button className="relative hover:opacity-70 transition-opacity">
+              <Link href="/cart" className="relative hover:opacity-70 transition-opacity">
                 <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6" />
                 <span className="absolute -top-2 -right-2 bg-[#9b1e22] text-white text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs">
                   0
                 </span>
-              </button>
+              </Link>
             </div>
           </div>
 
-          {/* Mobile Search Bar */}
           {isSearchOpen && (
             <div className="md:hidden mt-3">
               <div className="relative">
@@ -95,12 +90,10 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Desktop Navigation */}
       <div className="hidden lg:block">
         <Nav />
       </div>
 
-      {/* Mobile Navigation */}
       {isMobileMenuOpen && (
         <div className="lg:hidden bg-gray-200 border-t border-gray-300">
           <div className="px-4 py-3">
@@ -120,26 +113,10 @@ export default function Header() {
                         </span>
                       )}
                     </span>
-                    {item.hasDropdown && (
-                      <svg
-                        className="w-3 h-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={3}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    )}
                   </button>
                 </li>
               ))}
             </ul>
-            {/* Mobile-only icons */}
             <div className="flex gap-5 mt-4 pt-4 border-t border-gray-300">
               <button className="flex items-center gap-2 hover:opacity-70 transition-opacity">
                 <User className="w-5 h-5" />
@@ -158,7 +135,6 @@ export default function Header() {
 }
 
 function Nav() {
-  // #ffe6d2
   return (
     <nav className="bg-gray-200">
       <div className="flex justify-center items-center mx-auto">
@@ -175,21 +151,6 @@ function Nav() {
                   >
                     {item.badge}
                   </span>
-                )}
-                {item.hasDropdown && (
-                  <svg
-                    className="w-3 h-3 ml-0.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={3}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
                 )}
               </button>
             </li>

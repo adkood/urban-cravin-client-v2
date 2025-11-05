@@ -2,15 +2,12 @@ import { ProductType } from "@/components/cards/product-card";
 import { DHHProductShocase } from "@/components/fav-clothing-caraousel";
 
 export const NAV_ITEMS = [
-    { label: 'OUR LAST SALE', badge: 'HOT' },
-    { label: 'EYEWEAR', hasDropdown: true },
-    { label: 'HATS & CAPS', hasDropdown: true },
-    { label: 'LOOP WAITLIST', badge: 'NEW' },
-    { label: 'CLOTHING', hasDropdown: true },
-    { label: 'ACCESSORIES', hasDropdown: true },
-    { label: 'COLLABS', hasDropdown: true },
-    { label: 'UMSB', hasDropdown: true },
-    { label: 'ABOUT US' }
+    { label: 'BAGGY VEST',HREF : "/collection/baggy-vest" },
+    { label: 'OVERSIZED TEES',  badge: 'HOT',HREF : "/collection/baggy-vest"  },
+    { label: 'SWEATPANTS', HREF : "/collection/sweatpants" },
+    { label: 'DHH COLLECTION', badge : "New",HREF : "/collection/DHH"  },
+    { label: 'SHOP ALL' ,HREF : "/collection/all" },
+    { label: 'ABOUT US',HREF : "/aboutvest" }
 ];
 
 export const TOP_HEADER_MARQUEE_ITEMS = [
@@ -54,7 +51,7 @@ export const COLLECTIONS = [
 
 export const First_PRODUCT_LIST : ProductType[] = [
   {
-    id: 1,
+    id: "8b331559-2883-4155-a8b8-f85cfad39c20",
     name: 'Afterlife Coil',
     price: 151,
     image: '/webp tshirt/Afterlife Coil/7_20250928_160829_0006.webp',

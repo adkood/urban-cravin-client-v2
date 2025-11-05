@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       const token = resp.data.token; 
 
       (await cookies()).set("Authorization","Bearer "+token, {
-        httpOnly: true,
+        httpOnly: false,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         path: "/",

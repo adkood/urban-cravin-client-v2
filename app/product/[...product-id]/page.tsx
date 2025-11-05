@@ -5,24 +5,25 @@ import Header from "@/components/common/header";
 import Marquee from "@/components/marque";
 import {  TOP_HEADER_MARQUEE_ITEMS } from "@/lib/constants";
 import { ChevronLeft, ChevronRight, Heart, RotateCcw, Shield, Star, Truck } from "lucide-react";
-import { useState } from "react";
+import { startTransition, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button"
 import ProductGallery from "@/components/product/product-gallery";
 import SizeChart from "@/components/product/size-chart";
 import ProductFeatureCard from "@/components/showcase-card";
 import ProductReviews from "@/components/product/product-reviews";
 import RelatedProducts from "@/components/product/related-products";
-import { useCounterStore } from "@/providers/user-store-provider";
+import { toast } from "sonner";
+import { addToCart } from "@/data/cart";
 
 type SizesType = "L" | "S" | "M"
 
 const mockProduct = {
-  id: "00732618-b92c-46b0-aa4b-a9856cac6d94",
-  name: "Street Art Collection",
+  id: "8b331559-2883-4155-a8b8-f85cfad39c20",
+  name: "Afterlife Coil",
   description: "Bold street art inspired design on premium quality fabric. Express your urban creativity.",
-  price: 3499.0,
-  discountAmount: 700,
-  discountPercentage: 20,
+  price: 1599.00,
+  discountAmount: 159.9,
+  discountPercentage: 10,
   rating: 4.8,
   reviews: 289,
   stockQuantity: 30,
@@ -72,13 +73,28 @@ export default function ProductPage() {
   const [quantity, setQuantity] = useState<number>(1)
   const [isFavorite, setIsFavorite] = useState<boolean>(false)
   const [showSizeChart, setShowSizeChart] = useState<boolean>(false)
+  const [isPending, startTransition] = useTransition();
+
 
   const discountedPrice = mockProduct.price - (mockProduct.discountAmount || 0)
 
-  const { count, incrementCount, decrementCount } = useCounterStore(
-    (state) => state,
-  )
+  async function handleAddToCart() {
+    startTransition(async () => {
+      try {
+        const res = await addToCart({
+          productId: mockProduct.id,
+          size: selectedSize,
+          qty: quantity,
+        });
 
+        toast.success("Item added to cart!");
+        console.log("Cart Response:", res);
+      } catch (error) {
+        toast.error("Failed to add to cart");
+        console.error(error);
+      }
+    });
+  }
 
 
   return (
@@ -218,9 +234,15 @@ export default function ProductPage() {
                         </div>
                     </div>
 
-                    <Button size="lg" className="w-full h-12 text-base font-semibold">
-                        Add to Cart
-                    </Button>
+                          <Button
+                                size="lg"
+                                className="w-full h-12 text-base font-semibold"
+                                onClick={handleAddToCart}
+                                disabled={isPending}
+                            >
+                                {isPending ? "Adding..." : "Add to Cart"}
+                            </Button>
+
 
                     <div className="grid grid-cols-3 gap-4 pt-4 border-t border-border">
                         <div className="flex flex-col items-center gap-2 text-center">
@@ -239,16 +261,6 @@ export default function ProductPage() {
                 </div>
             </div>
         </div>
-        <div>
-      Count: {count}
-      <hr />
-      <button type="button" onClick={incrementCount}>
-        Increment Count
-      </button>
-      <button type="button" onClick={decrementCount}>
-        Decrement Count
-      </button>
-    </div>
         <RelatedProducts/>
         <ProductReviews />
         <Footer/>

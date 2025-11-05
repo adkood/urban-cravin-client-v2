@@ -1,4 +1,4 @@
-import { CounterStoreProvider } from "@/providers/user-store-provider";
+import { UserStoreProvider } from "@/providers/user-store-provider";
 
 export default function Provider({
   children,
@@ -6,8 +6,8 @@ export default function Provider({
   children: React.ReactNode;
 }>) {
   return (
-   <CounterStoreProvider>
+   <UserStoreProvider>
     {children}
-   </CounterStoreProvider>
+   </UserStoreProvider>
   );
 }

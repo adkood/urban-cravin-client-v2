@@ -1,47 +1,59 @@
-'use client'
-
-import { type ReactNode, createContext, useRef, useContext } from 'react'
-import { useStore } from 'zustand'
+'use client';
 
 import {
-  type CounterStore,
-  createCounterStore,
-  initCounterStore,
-} from '@/stores/userStore'
+  createContext,
+  useContext,
+  useRef,
+  type ReactNode,
+  useMemo,
+} from 'react';
+import { shallow } from 'zustand/shallow';
+import { useStoreWithEqualityFn } from 'zustand/traditional'
+import { createUserStore, type UserStore } from '@/stores/userStore';
 
-export type CounterStoreApi = ReturnType<typeof createCounterStore>
+// Define the API type
+export type UserStoreApi = ReturnType<typeof createUserStore>;
 
-export const CounterStoreContext = createContext<CounterStoreApi | undefined>(
-  undefined,
-)
+// Create context
+const UserStoreContext = createContext<UserStoreApi | null>(null);
 
-export interface CounterStoreProviderProps {
-  children: ReactNode
+interface UserStoreProviderProps {
+  children: ReactNode;
+  baseUrl?: string;
 }
 
-export const CounterStoreProvider = ({
+export const UserStoreProvider = ({
   children,
-}: CounterStoreProviderProps) => {
-  const storeRef = useRef<CounterStoreApi | null>(null)
-  if (storeRef.current === null) {
-    storeRef.current = createCounterStore(initCounterStore())
+  baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '',
+}: UserStoreProviderProps) => {
+
+  const storeRef = useRef<UserStoreApi>(null);
+
+  if (!storeRef.current) {
+    storeRef.current = createUserStore();
   }
+
+  // ✅ Memoize context value so React doesn’t re-render unnecessarily
+  const contextValue = useMemo(() => storeRef.current!, []);
 
   return (
-    <CounterStoreContext.Provider value={storeRef.current}>
+    <UserStoreContext.Provider value={contextValue}>
       {children}
-    </CounterStoreContext.Provider>
-  )
-}
+    </UserStoreContext.Provider>
+  );
+};
 
-export const useCounterStore = <T,>(
-  selector: (store: CounterStore) => T,
+// Custom hook to access user store
+export const useUserStore = <T,>(
+  selector: (state: UserStore) => T,
+  equalityFn = shallow // ✅ use shallow comparison by default
 ): T => {
-  const counterStoreContext = useContext(CounterStoreContext)
-
-  if (!counterStoreContext) {
-    throw new Error(`useCounterStore must be used within CounterStoreProvider`)
+  const ctx = useContext(UserStoreContext);
+  if (!ctx) {
+    throw new Error('useUserStore must be used within a UserStoreProvider');
   }
 
-  return useStore(counterStoreContext, selector)
-}
+  // ✅ Prevents infinite loop & excessive renders
+  return useStoreWithEqualityFn(ctx, selector, equalityFn);
+};
+
