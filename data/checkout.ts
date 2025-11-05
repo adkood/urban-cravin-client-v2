@@ -1,3 +1,5 @@
+"use server";
+
 import { CHECKOUT_CASH_ON_DELIVERY_URL, CHECKOUT_ONLINE_URL } from "@/lib/urls";
 import { ActionResponse, getAuthToken } from "./cart";
 import axios from "axios";

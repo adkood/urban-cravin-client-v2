@@ -1,5 +1,3 @@
-'use server';
-
 import { BASE_URL } from '@/lib/urls';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/utils';
