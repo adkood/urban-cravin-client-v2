@@ -1,4 +1,4 @@
-'use client';
+'use server';
 
 import { BASE_URL } from '@/lib/urls';
 import useSWR from 'swr';
@@ -19,6 +19,8 @@ export default function UserAvatar() {
       revalidateOnFocus: false,
       shouldRetryOnError: false, 
     });
+
+
 
   if (isLoading || error || !data) {
     return <Link href={"/login"}>

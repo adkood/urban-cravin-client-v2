@@ -1,3 +1,5 @@
+"use server";
+
 import { ADD_ADDRESS_URL, BASE_URL, DELETE_ADDRESS_URL, GET_ADDRESSES_URL, UPDATE_ADDRESS_URL } from "@/lib/urls"
 import { ActionResponse, getAuthToken } from "./cart"
 import axios from "axios"
