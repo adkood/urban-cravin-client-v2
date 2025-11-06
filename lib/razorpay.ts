@@ -1,6 +1,25 @@
 import axios from "axios";
 import { BASE_URL, RETURNURLAFTERPAYMENT, VERIFY_PAYMENT_URL } from "./urls";
-import { getAuthToken } from "@/data/cart";
+
+declare global {
+  interface Window {
+    Razorpay: new (options: unknown) => {
+      open: () => void;
+      on: (event: string, callback: (response: { error : {
+        code: string;
+        description: string;
+        source: string;
+        step: string;
+        reason: string;
+        metadata: {
+          order_id: string;
+          payment_id: string;
+        };
+      } }) => void) => void;
+    };
+  }
+}
+
 
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {

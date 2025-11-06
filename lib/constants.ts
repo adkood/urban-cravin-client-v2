@@ -1,13 +1,11 @@
-import { ProductType } from "@/components/cards/product-card";
 import { DHHProductShocase } from "@/components/fav-clothing-caraousel";
 
 export const NAV_ITEMS = [
-    { label: 'BAGGY VEST',HREF : "/collection/baggy-vest" },
-    { label: 'OVERSIZED TEES',  badge: 'HOT',HREF : "/collection/baggy-vest"  },
+    { label: 'BAGGY VEST',HREF : "/collection/baggy-vests" },
+    { label: 'OVERSIZED TEES',  badge: 'HOT',HREF : "/collection/oversized-tees"  },
     { label: 'SWEATPANTS', HREF : "/collection/sweatpants" },
-    { label: 'DHH COLLECTION', badge : "New",HREF : "/collection/DHH"  },
-    { label: 'SHOP ALL' ,HREF : "/collection/all" },
-    { label: 'ABOUT US',HREF : "/aboutvest" }
+    { label: 'DHH COLLECTION', badge : "New",HREF : "/collection/dhh"  },
+    { label: 'ABOUT US',HREF : "/about" }
 ];
 
 export const TOP_HEADER_MARQUEE_ITEMS = [
@@ -26,7 +24,7 @@ export const COLLECTIONS = [
     title: 'BAGGY VESTs',
     buttonText: 'SHOP HERE',
     image: '/DSC_8376.JPG',
-    link: '/collections/mens-fall-2025',
+    link: '/collection/baggy-vests',
     alt: 'Man wearing a pink cap'
   },
   {
@@ -35,7 +33,7 @@ export const COLLECTIONS = [
     title: 'SWEATPANTS',
     buttonText: 'SHOP HERE',
     image: '/k-1a.webp',
-    link: '/products/hyperloop-overshirt-cadet-blue',
+    link: '/collection/sweatpants',
     alt: 'Black ashtray in hand'
   },
   {
@@ -44,147 +42,9 @@ export const COLLECTIONS = [
     title: 'OVERSIZED TEES',
     buttonText: 'SHOP HERE',
     image: '/post2.webp',
-    link: '/collections/jarren-duran',
+    link: '/collection/oversized-tees',
     alt: 'Woman wearing pink t-shirt and plaid skirt'
   }
-];
-
-export const First_PRODUCT_LIST : ProductType[] = [
-  {
-    id: "8b331559-2883-4155-a8b8-f85cfad39c20",
-    name: 'Afterlife Coil',
-    price: 151,
-    image: '/webp tshirt/Afterlife Coil/7_20250928_160829_0006.webp',
-    badge: 'NEW IN',
-    colors: ['#4A5568'],
-    isFavorited: false,
-    rating : 4.5,
-    reviews : 124
-  },
-  {
-    id: 2,
-    name: 'Porsche 911 GT3',
-    price: 151,
-    image: '/webp tshirt/Porsche 911 GT3/24_20250928_160830_0023.webp',
-    badge: 'Best Seller',
-    colors: ['#CBD5E0', '#4299E1'],
-    isFavorited: false,
-    rating : 4.5,
-    reviews : 124
-  },
-  {
-    id: 3,
-    name: 'Heavy Bite',
-    price: 267,
-    image: '/webp tshirt/Heavy Bite/13_20250928_160829_0012.webp',
-    badge: 'Trending',
-    colors: ['#718096'],
-    isFavorited: false,
-    rating : 4.5,
-    reviews : 124
-  },
-    {
-    id: 4,
-    name: 'Afterlife Coil',
-    price: 151,
-    image: '/webp tshirt/Afterlife Coil/7_20250928_160829_0006.webp',
-    badge: 'NEW IN',
-    colors: ['#4A5568'],
-    isFavorited: false,
-    rating : 4.5,
-    reviews : 124
-  },
-  {
-    id: 5,
-    name: 'Porsche 911 GT3',
-    price: 151,
-    image: '/webp tshirt/Porsche 911 GT3/24_20250928_160830_0023.webp',
-    badge: 'Best Seller',
-    colors: ['#CBD5E0', '#4299E1'],
-    isFavorited: false,
-    rating : 4.5,
-    reviews : 124
-  },
-  {
-    id: 6,
-    name: 'Heavy Bite',
-    price: 267,
-    image: '/webp tshirt/Heavy Bite/13_20250928_160829_0012.webp',
-    badge: 'Trending',
-    colors: ['#718096'],
-    isFavorited: false,
-    rating : 4.5,
-    reviews : 124
-  },
-];
-
-export const LAST_PRODUCT_LIST : ProductType[] = [
-  {
-    id: 7,
-    name: 'Spirited soul',
-    price: 151,
-    image: '/4_20251007_172157_0003-scaled.png',
-    badge: 'NEW IN',
-    colors: ['#4A5568'],
-    isFavorited: false,
-    rating : 4.5,
-    reviews : 124
-  },
-  {
-    id: 8,
-    name: 'Heavy Bite',
-    price: 267,
-    image: 'https://urbancravin.com/wp-content/uploads/al_opt_content/IMAGE/urbancravin.com/wp-content/uploads/2025/09/1_20250925_194418_0000.png.bv.webp?bv_host=urbancravin.com',
-    badge: 'Trending',
-    colors: ['#718096'],
-    isFavorited: false,
-    rating : 4.5,
-    reviews : 124
-  },
-  {
-    id: 9,
-    name: 'Porsche 911 GT3',
-    price: 151,
-    image: '/5_20251007_172157_0004-scaled.png',
-    badge: 'Best Seller',
-    colors: ['#CBD5E0', '#4299E1'],
-    isFavorited: false,
-    rating : 4.5,
-    reviews : 124
-  },
-  {
-    id: 10,
-    name: 'Spirited soul',
-    price: 151,
-    image: '/4_20251007_172157_0003-scaled.png',
-    badge: 'NEW IN',
-    colors: ['#4A5568'],
-    isFavorited: false,
-    rating : 4.5,
-    reviews : 124
-  },
-  {
-    id: 11,
-    name: 'Heavy Bite',
-    price: 267,
-    image: 'https://urbancravin.com/wp-content/uploads/al_opt_content/IMAGE/urbancravin.com/wp-content/uploads/2025/09/1_20250925_194418_0000.png.bv.webp?bv_host=urbancravin.com',
-    badge: 'Trending',
-    colors: ['#718096'],
-    isFavorited: false,
-    rating : 4.5,
-    reviews : 124
-  },
-  {
-    id: 12,
-    name: 'Porsche 911 GT3',
-    price: 151,
-    image: '/5_20251007_172157_0004-scaled.png',
-    badge: 'Best Seller',
-    colors: ['#CBD5E0', '#4299E1'],
-    isFavorited: false,
-    rating : 4.5,
-    reviews : 124
-  },
 ];
 
 export const DHH_SHOWCASE_LISTING : DHHProductShocase[] = [

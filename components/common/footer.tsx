@@ -19,29 +19,21 @@ const Footer = () => {
   };
 
   const shopLinks = [
-    { label: "Shop All Men's", href: "/mens-shop-all" },
-    { label: "Shop All Women's", href: "/womens-shop-all" },
-    { label: "Gift Card", href: "/gift-card" },
+    { label: "Baggy Vests", href: "/collection/baggy-vests" },
+    { label: "Oversized Tees", href: "/collection/oversized-tees" },
+    { label: "Sweatpants", href: "/collection/sweatpants" },
+    { label: "DHH Collection", href: "/collection/dhh" },
   ];
 
   const brandLinks = [
-    { label: "About Us", href: "/about-us" },
-    { label: "Rewards", href: "/rewards" },
-    { label: "Careers", href: "/careers" },
-    { label: "Military & First Responders", href: "/military-discount" },
-    { label: "Corporate and Wholesale", href: "/wholesale" },
-    { label: "Marketplace", href: "https://marketplace.example.com" },
+    { label: "About Us", href: "/about" },
   ];
 
   const contactLinks = [
-    { label: "FAQ", href: "/faq" },
     { label: "My Account", href: "/account" },
     { label: "Order Tracking", href: "/tracking" },
     { label: "Returns & Exchanges", href: "/returns" },
-    { label: "Shipping Protection Policy", href: "/shipping-protection" },
-    { label: "Size + Fit", href: "/size-fit" },
     { label: "Contact Us", href: "/contact" },
-    { label: "Accessibility", href: "/accessibility" },
   ];
 
   const MobileAccordion = ({

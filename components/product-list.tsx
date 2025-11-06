@@ -2,15 +2,18 @@
 
 import { useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import ProductCard, { ProductType } from './cards/product-card'
+import ProductCard from './cards/product-card'
+import { Product } from '@/data/product'
 
 export default function ProductCarousel({
   title,
   products,
   size = 'tees',
+  isLoading,
 }: {
   title: string
-  products: ProductType[]
+  products: Product[]
+  isLoading: boolean
   size: 'tees' | 'pants'
 }) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -58,6 +61,8 @@ export default function ProductCarousel({
     const walk = (x - startX) * 1.2
     scrollContainerRef.current.scrollLeft = scrollStart - walk
   }
+
+  console.log(products)
 
   const handleTouchEnd = () => setIsDragging(false)
 

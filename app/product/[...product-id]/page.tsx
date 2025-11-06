@@ -262,7 +262,7 @@ export default function ProductPage() {
             </div>
         </div>
         <RelatedProducts/>
-        <ProductReviews />
+        <ProductReviews productId={mockProduct.id} />
         <Footer/>
     </main>
   );

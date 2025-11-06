@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { TESTIMONIALS as testimonials } from '@/lib/constants';
 import AnimatedContent from './ui/AnimatedContent';

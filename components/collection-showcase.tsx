@@ -1,10 +1,12 @@
+"use client";
+
 import { COLLECTIONS as collections } from "@/lib/constants";
 import AnimatedContent from "./ui/AnimatedContent";
 import Link from "next/link";
 
 const TrendingCollections = () => {
   return (
-    <section className="w-full bg-white py-8 md:py-12">
+    <section className="relative w-full bg-white py-8 md:py-12">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         {/* Three Column Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
@@ -46,7 +48,7 @@ const TrendingCollections = () => {
                                 </h3>
                                 
                                 {/* Button */}
-                                <Link href={`/collection/${collection.title}`} className="bg-white text-black text-xs md:text-sm font-semibold tracking-wide px-6 py-2.5 md:px-8 md:py-3 hover:bg-gray-100 transition-colors duration-200">
+                                <Link href={collection.link} className="bg-white text-black text-xs md:text-sm font-semibold tracking-wide px-6 py-2.5 md:px-8 md:py-3 hover:bg-gray-100 transition-colors duration-200">
                                   {collection.buttonText}
                                 </Link>
                               </div>

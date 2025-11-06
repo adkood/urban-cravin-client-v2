@@ -1,10 +1,10 @@
-import { BASE_URL } from '@/lib/urls';
+import { BASE_URL, GET_USER_DETAILSURL } from '@/lib/urls';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/utils';
 import { User, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 
-type UserDetails = {
+export type UserDetails = {
   user: {
     username: string;
     email: string;
@@ -13,7 +13,7 @@ type UserDetails = {
 };
 
 export default function UserAvatar() {
-  const { data, error, isLoading } = useSWR<UserDetails>(`${BASE_URL}/api/users/details`, fetcher(),{
+  const { data, error, isLoading } = useSWR<UserDetails>(GET_USER_DETAILSURL, fetcher(),{
       revalidateOnFocus: false,
       shouldRetryOnError: false, 
     });

@@ -80,14 +80,60 @@ export async function addReview({
   }
 }
 
-interface FilterProductsParams {
+export interface FilterProductsParams {
   page?: number;
   size?: number;
   minPrice?: number;
   maxPrice?: number;
   categoryName?: string;
   search?: string;
-  token: string;
+}
+
+export interface ProductImage {
+  id: string;
+  url: string;
+  primaryImage: boolean;
+  altText: string;
+}
+export interface ProductCategory {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  discountAmount: number | null;
+  discountPercentage: number;
+  taxPercentage: number;
+  active: boolean;
+  stockQuantity: number;
+  weight: number | null;
+  dimensions: string | null;
+  sku: string;
+  category: ProductCategory;
+  images: ProductImage[];
+  avgRating: number;
+  reviewCount: number;
+  availableSizes: string[];
+}
+
+export interface FilterProductsData {
+  products: Product[];
+  currentPage: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  last: boolean;
+}
+
+export interface FilterProductsResponse {
+  status: string;
+  data: FilterProductsData;
 }
 
 export async function filterProductsAction({
@@ -97,11 +143,9 @@ export async function filterProductsAction({
   maxPrice,
   categoryName,
   search,
-  token,
-}: FilterProductsParams) {
+}: FilterProductsParams): Promise<FilterProductsData> {
   try {
-
-    const token = await getAuthToken()
+    const token = await getAuthToken();
 
     const params = new URLSearchParams({
       page: page.toString(),
@@ -118,7 +162,7 @@ export async function filterProductsAction({
       {
         method: "GET",
         headers: {
-          Authorization: token+"",
+          Authorization: token ?? "",
         },
         cache: "no-store",
       }
@@ -129,8 +173,8 @@ export async function filterProductsAction({
       throw new Error(`Failed to fetch products: ${res.status} - ${errorText}`);
     }
 
-    const json = await res.json();
-    return json?.data;
+    const json: FilterProductsResponse = await res.json();
+    return json.data;
   } catch (err) {
     console.error("FilterProductsAction Error:", err);
     throw err;

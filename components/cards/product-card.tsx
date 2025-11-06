@@ -1,19 +1,11 @@
+"use client";
+
 import { Heart } from 'lucide-react';
 import React from 'react';
 import AnimatedContent from '../ui/AnimatedContent';
 import Link from 'next/link';
-
-export type ProductType = {
-  id: number | string;
-  name: string;
-  price: number;
-  image: string;
-  badge?: string;        
-  colors: string[];      
-  isFavorited: boolean;
-  rating: number;
-  reviews: number;
-};
+import { Product } from '@/data/product';
+import { BASE_URL } from '@/lib/urls';
 
 const toggleFavorite = (id: number | string) => {
     // Add your favorite toggle logic here
@@ -22,13 +14,18 @@ const toggleFavorite = (id: number | string) => {
 const ProductCard = ({
   product,
   size,
-  isfull = false
+  isfull = false,
+  animate = true
 }: {
   size : 'tees' | 'pants'
-  product: ProductType
+  product: Product
   isfull ?: boolean
+  animate ?: boolean
 }) => {
-  return (
+
+  console.log("in card",product)
+
+  if(animate) return (
     <AnimatedContent
       distance={150}
       key={product.id}
@@ -40,21 +37,19 @@ const ProductCard = ({
       scale={1.1}
       threshold={0.2}
       delay={0.3}
-    >
+    > 
+      <ProductCard product={product} isfull animate={false} size={size}/>
+    </AnimatedContent>
+  )
+
+  return (
+    
       <div
         key={product.id}
         className={`flex-none ${isfull ? "w-full" : "w-[calc(25%-18px)] min-w-[400px]"}`}
       >
         <div className="group relative bg-white rounded-lg overflow-hidden mb-4">
-          <div className="absolute top-4 left-4 z-10">
-            <span className={`inline-block px-3 py-1 text-xs font-medium tracking-wider rounded-full ${
-              product.badge === 'BESTSELLER' 
-                ? 'bg-slate-100/60 text-black' 
-              : 'bg-slate-100/60 text-black'
-            }`}>
-              {product.badge}
-            </span>
-          </div>
+         
           
           <button
             onClick={() => toggleFavorite(product.id)}
@@ -63,7 +58,7 @@ const ProductCard = ({
           >
             <Heart
               className={`w-5 h-5 ${
-                (product.id + "").length % 2 == 0 
+                (false) 
                   ? 'fill-red-500 stroke-red-500'
                   : 'stroke-gray-700'
               }`}
@@ -72,7 +67,7 @@ const ProductCard = ({
 
           <Link href={`/product/${product.id}`}>
           <img 
-            src={product.image} 
+            src={BASE_URL+product.images.find((i) => i.primaryImage)?.url} 
             alt={product.name}
             className={`${
               size == 'tees' ? "aspect-[4/4]" : "aspect-auto"
@@ -84,18 +79,22 @@ const ProductCard = ({
         <Link href={`/product/${product.id}`}>
          <h3 className="text-xl font-normal mb-1">{product.name}</h3>
         </Link>
-        <p className="text-lg font-light mb-2">${product.price}</p>
+<p className="text-lg font-light mb-2">
+  <span className="text-sm font-light align-middle mr-1 text-pink-50">₹</span>
+  {product.price.toLocaleString("en-IN")}
+</p>
 
-        {product.rating && (
+
+        {(
           <div className="flex items-center gap-2">
             <div className="flex">
               {[...Array(5)].map((_, i) => (
                 <span
                   key={i}
                   className={`text-sm ${
-                    i < Math.floor(product.rating)
+                    i < Math.floor(product.avgRating)
                       ? 'text-yellow-500'
-                      : i < product.rating
+                      : i < product.avgRating
                       ? 'text-yellow-500'
                       : 'text-gray-300'
                   }`}
@@ -104,11 +103,10 @@ const ProductCard = ({
                 </span>
               ))}
             </div>
-            <span className="text-sm text-gray-600">({product.reviews})</span>
+            <span className="text-sm text-gray-600">({product.reviewCount+""})</span>
           </div>
         )}
-      </div>
-    </AnimatedContent>
+      </div> 
   );
 };
 
