@@ -1,5 +1,7 @@
+
 import axios from "axios";
-import { BASE_URL, RETURNURLAFTERPAYMENT, VERIFY_PAYMENT_URL } from "./urls";
+import {  RETURNURLAFTERPAYMENT, VERIFY_PAYMENT_URL } from "./urls";
+import { getAuthToken } from "@/data/cart";
 
 declare global {
   interface Window {
@@ -71,8 +73,7 @@ export const handleRazorpay = async ({
       razorpay_order_id: string;
       razorpay_signature: string;
     }) {
-
-        console.log(response.razorpay_signature);
+      const token = await getAuthToken()
       try {
         const verifyResponse = await axios.post(
           VERIFY_PAYMENT_URL,
@@ -84,18 +85,17 @@ export const handleRazorpay = async ({
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhc2h1dG9zaCIsImlhdCI6MTc2MjI3NDk2MCwiZXhwIjoxNzYyMjc4NTYwfQ.-2mgcxN74XUUxFop8wdVCu4NBNmnANidJKLwP3LHW4w",
+              Authorization: token,
             },
           }
         );
 
         console.log("✅ Payment verified:", verifyResponse.data);
-        // Redirect after verification
         window.location.href = `${RETURNURLAFTERPAYMENT}?order_id=${receipt}&payment_id=${response.razorpay_payment_id}&sessionId=${sessionId}`;
       } catch (error) {
         console.error("❌ Payment verification failed:", error);
         window.location.href = `${RETURNURLAFTERPAYMENT}?order_id=${receipt}&payment_id=${response.razorpay_payment_id}&sessionId=${sessionId}`;
-        // alert("Payment verification failed. Please contact support.");
+        alert("Payment verification failed. Please contact support.");
       }
     },
     prefill: {

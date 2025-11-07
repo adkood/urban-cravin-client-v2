@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { REGISTERURL } from "@/lib/urls";
 
 export async function POST(req: Request) {
@@ -29,6 +29,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ status: resp.data.status, message : resp.data.message }, { status: 401 });
   } catch (err) {
     console.error("Register failed:", err);
-    return NextResponse.json({ status: "Error", message : "Something went wrong!!" }, { status: 500 });
+    if (isAxiosError(err)) {
+      return NextResponse.json({ status: "Error", message : err.response?.data.message || "Couldn't Register" }, { status: err.response?.status || 500 });
+    }
+    return NextResponse.json({ status: "Error", message : err }, { status: 500 });
   }
 }

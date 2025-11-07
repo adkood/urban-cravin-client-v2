@@ -2,7 +2,7 @@
 
 import { ADD_ADDRESS_URL, BASE_URL, DELETE_ADDRESS_URL, GET_ADDRESSES_URL, UPDATE_ADDRESS_URL } from "@/lib/urls"
 import { ActionResponse, getAuthToken } from "./cart"
-import axios from "axios"
+import axios, { isAxiosError } from "axios"
 
 export interface AddressPayload {
   street: string
@@ -243,5 +243,120 @@ export async function updateUserAddress(
           ? error.message
           : "Unknown error occurred while updating address",
     }
+  }
+}
+
+export interface ForgotPasswordPayload {
+  email: string;
+}
+
+export interface ForgotPasswordResponse {
+  message: string;
+  data: null;
+}
+
+export async function forgotPassword(
+  payload: ForgotPasswordPayload
+): Promise<ActionResponse<ForgotPasswordResponse>> {
+  try {
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${BASE_URL}/api/auth/forgot-password`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: payload,
+    };
+
+    const response = (
+      await axios.request<{
+        status: string;
+        message: string;
+        data: null;
+      }>(config)
+    ).data;
+
+    if (response.status.toLowerCase() !== "success") {
+      return {
+        success: false,
+        error: response.message,
+      };
+    }
+
+    return {
+      success: true,
+      data: {
+        message: response.message,
+        data: response.data,
+      },
+    };
+  } catch (error) {
+    console.error("Error sending forgot password request:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error occurred",
+    };
+  }
+}
+
+export interface ResendVerificationPayload {
+  email: string;
+}
+
+export interface ResendVerificationResponse {
+  message: string;
+  data: null;
+}
+
+export async function resendVerificationEmail(
+  payload: ResendVerificationPayload
+): Promise<ActionResponse<ResendVerificationResponse>> {
+  try {
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${BASE_URL}/api/auth/resend-verification?email=${encodeURIComponent(
+        payload.email
+      )}`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    const response = (
+      await axios.request<{
+        status: string;
+        message: string;
+        data: null;
+      }>(config)
+    ).data;
+
+    if (response.status.toLowerCase() !== "success") {
+      return {
+        success: false,
+        error: response.message,
+      };
+    }
+
+    return {
+      success: true,
+      data: {
+        message: response.message,
+        data: response.data,
+      },
+    };
+  } catch (error) {
+    console.error("Error resending verification email:", error);
+    if(isAxiosError(error)) {
+      return {
+        success : false,
+        error : error.response?.data.message
+      }
+    }
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error occurred",
+    };
   }
 }

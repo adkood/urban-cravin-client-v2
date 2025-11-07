@@ -1,6 +1,6 @@
 export const BASE_URL= "https://darfit.in"
-export const LOGINURL = `${BASE_URL}/auth/login`
-export const REGISTERURL = `${BASE_URL}/auth/signup`
+export const LOGINURL = `${BASE_URL}/api/auth/login`
+export const REGISTERURL = `${BASE_URL}/api/auth/signup`
 export const CLIENT_LOGINURL = `api/auth/login`
 export const CLIENT_REGISTERURL = `api/auth/register`
 export const GET_USER_DETAILSURL = `${BASE_URL}/api/users/details`

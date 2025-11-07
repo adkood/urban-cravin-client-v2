@@ -23,8 +23,6 @@ const ProductCard = ({
   animate ?: boolean
 }) => {
 
-  console.log("in card",product)
-
   if(animate) return (
     <AnimatedContent
       distance={150}

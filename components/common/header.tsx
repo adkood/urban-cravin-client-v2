@@ -171,8 +171,8 @@ export default function Header() {
                       >
                         <img
                           src={
-                            p.images.find((img) => img.primaryImage)?.url ||
-                            p.images[0]?.url
+                            BASE_URL+(p.images.find((img) => img.primaryImage)?.url ||
+                            p.images[0]?.url)
                           }
                           alt={p.name}
                           className="w-12 h-12 object-cover rounded-md"

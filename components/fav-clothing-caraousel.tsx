@@ -7,7 +7,7 @@ import GlareHover from "./ui/GlareHover";
 import Link from "next/link";
 
 export interface DHHProductShocase {
-  id: number;
+  id: string;
   name: string;
   price: string;
   productImage: string;
@@ -123,7 +123,7 @@ const FeaturedProductsCarousel: React.FC = () => {
           playOnce={false}
         >
           <Link
-            href={product.link}
+            href={`/product/${product.id}`}
             className="block mt-6 md:mt-12"
           >
             <img

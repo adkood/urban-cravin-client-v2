@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import {  Plus } from "lucide-react";
+import {  Plus, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 
 import {
@@ -28,21 +28,12 @@ import { checkoutCOD, checkoutOnline, CheckoutDataOnline } from "@/data/checkout
 import { handleRazorpay } from "@/lib/razorpay";
 import { UserDetails } from "@/components/cards/user-profile";
 import useSWR from "swr";
-import { GET_USER_DETAILSURL } from "@/lib/urls";
+import { BASE_URL, GET_USER_DETAILSURL } from "@/lib/urls";
 import { fetcher } from "@/lib/utils";
 import AddressFormDialog from "@/components/address-form-dialog"; 
 import { toast } from "sonner";
-import { ApiCart, getCart } from "@/data/cart";
-
-const orderItems = [
-  {
-    id: "1",
-    title: "Urban Legend",
-    price: 1250,
-    quantity: 1,
-    image: "/urban-legend-tshirt.jpg",
-  },
-];
+import { ApiCart, ApiCartItem, getCart } from "@/data/cart";
+import { nunitoSans } from "@/lib/fonts";
 
 const formSchema = z.object({
   paymentMethod: z.enum(["cod", "razorpay"]),
@@ -51,14 +42,13 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-/* ------------------------------------------------------------------ */
 export default function CheckoutPage() {
-  /* ---------------------- STATE ---------------------- */
   const [addresses, setAddresses] = useState<ApiAddress[]>([]);
   const [cart,setCart] = useState<ApiCart>();
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [discount, setDiscount] = useState(0);  
   const { data, error : userError, isLoading : userLoading } = useSWR<UserDetails>(GET_USER_DETAILSURL, fetcher(),{
     revalidateOnFocus: false,
     shouldRetryOnError: false, 
@@ -76,7 +66,6 @@ export default function CheckoutPage() {
 
   console.log(selectedAddressId);
   console.log(isLoading)
-  /* ---------------------- FETCH USER + ADDRESSES ---------------------- */
   const loadData = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -104,7 +93,6 @@ export default function CheckoutPage() {
     loadData();
   }, [loadData]);
 
-  /* ---------------------- ADDRESS HANDLER ---------------------- */
   const handleAddAddress = async (data: AddressPayload) => {
     const res = await addUserAddress(data);
     if (res.success) {
@@ -117,16 +105,13 @@ export default function CheckoutPage() {
     }
   };
 
-  /* ---------------------- DISCOUNT ---------------------- */
   const applyDiscount = () => {
     const code = form.getValues("discountCode")?.trim().toUpperCase();
     if (!code) {
       setDiscount(0);
       return;
     }
-    // demo: SAVE10 → 10%
     if (code === "SAVE10") {
-      setDiscount(subtotal * 0.1);
       toast.success("Discount applied");
     } else {
       setDiscount(0);
@@ -135,13 +120,8 @@ export default function CheckoutPage() {
     }
   };
 
-  /* ---------------------- TOTALS ---------------------- */
-  const subtotal = orderItems.reduce((s, i) => s + i.price * i.quantity, 0);
-  const [discount, setDiscount] = useState(0);  
-  const tax = Math.round(subtotal * 0.15);
-  const finalTotal = subtotal + tax - discount;
 
-  /* ---------------------- SUBMIT ---------------------- */
+
   const onSubmit = async (values: FormValues) => {
     if (!selectedAddressId) {
       toast.error("No address selected");
@@ -149,26 +129,6 @@ export default function CheckoutPage() {
     }
 
     const selectedAddr = addresses.find((a) => a.id === selectedAddressId)!;
-
-    const orderPayload = {
-      email: user?.email ?? "",
-      firstName: user?.username,
-      lastName: user?.username,
-      address: {
-        street: selectedAddr.street,
-        city: selectedAddr.city,
-        state: selectedAddr.state,
-        postalCode: selectedAddr.postalCode,
-        country: selectedAddr.country,
-      },
-      items: orderItems,
-      subtotal,
-      discount,
-      tax,
-      total: finalTotal,
-      paymentMethod: values.paymentMethod,
-      discountCode: values.discountCode ?? "",
-    };
 
     setIsLoading(true);
 
@@ -209,250 +169,266 @@ export default function CheckoutPage() {
       setIsLoading(false);
     }
   };
+  
 
-  console.log(cart)
-
-  /* ------------------------------------------------------------------ */
   return (
-    <div className="min-h-screen bg-white font-['Roboto_Mono']">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-3">
-          {/* ==================== LEFT COLUMN ==================== */}
-          <div className="lg:col-span-2">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                {/* ---------- EMAIL (read-only) ---------- */}
-                <div className="border-b border-gray-200 pb-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <p className="text-lg font-medium">{user?.email ?? "Loading…"}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* ---------- SAVED ADDRESSES ---------- */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-bold">Shipping address</h2>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowAddForm(true)}
-                      className="flex items-center gap-1"
-                    >
-                      <Plus size={16} /> Add new
-                    </Button>
-                  </div>
-
-                  {addresses.length === 0 && !showAddForm && (
-                    <p className="text-sm text-gray-500">No saved addresses. Add one to continue.</p>
-                  )}
-
-                  {/* ---- LIST ---- */}
-                  {addresses.length > 0 && (
-                    <RadioGroup
-                      value={selectedAddressId ?? undefined}
-                      onValueChange={setSelectedAddressId}
-                    >
-                      {addresses.map((addr) => (
-                        <div
-                          key={addr.id}
-                          className="flex items-start gap-3 rounded-lg border border-gray-200 p-4 mb-3 cursor-pointer hover:bg-gray-50"
-                        >
-                          <RadioGroupItem value={addr.id} id={addr.id} />
-                          <Label htmlFor={addr.id} className="flex-1 cursor-pointer">
-                            <p className="font-medium">
-                              {addr.street}
-                              {addr.defaultAddress && (
-                                <span className="ml-2 rounded bg-green-100 px-2 py-0.5 text-xs text-green-800">
-                                  Default
-                                </span>
-                              )}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              {addr.city}, {addr.state} {addr.postalCode}
-                              <br />
-                              {addr.country}
-                            </p>
-                          </Label>
+    <div className="min-h-screen bg-white">
+      <CheckOutHeader/>
+      <div className="bg-gray-50 min-h-screen">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-3">
+            {/* Left Column - Form Section */}
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-lg p-6 lg:p-8">
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                    {/* Email Section */}
+                    <div className="border-b border-gray-200 pb-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <p className="text-base font-semibold text-gray-900">
+                            {user?.email ?? "Loading…"}
+                          </p>
                         </div>
-                      ))}
-                    </RadioGroup>
-                  )}
+                      </div>
+                    </div>
 
-                  {/* ---- DIALOG ---- */}
-                  <AddressFormDialog
-                    isOpen={showAddForm}
-                    onClose={() => setShowAddForm(false)}
-                    onSubmit={handleAddAddress}
-                  />
-                </div>
+                    {/* Shipping Address Section */}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h2 className="text-xl font-bold text-gray-900">Shipping address</h2>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowAddForm(true)}
+                          className="flex items-center gap-1 text-sm font-medium"
+                        >
+                          <Plus size={16} /> Add new
+                        </Button>
+                      </div>
 
-                {/* ---------- PAYMENT ---------- */}
-                <div className="space-y-4">
-                  <h2 className="text-xl font-bold">Payment</h2>
+                      {addresses.length === 0 && !showAddForm && (
+                        <p className="text-sm text-gray-600">No saved addresses. Add one to continue.</p>
+                      )}
 
-                  <FormField
-                    control={form.control}
-                    name="paymentMethod"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <RadioGroup
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                            className="space-y-3"
-                          >
-                            <div className="flex items-center gap-4 border rounded-lg p-4 cursor-pointer hover:bg-gray-50">
-                              <RadioGroupItem value="cod" id="cod" />
-                              <Label htmlFor="cod" className="flex-1 cursor-pointer">
-                                <p className="font-medium">Cash on Delivery</p>
-                                <p className="text-sm text-gray-600">Pay when you receive</p>
-                              </Label>
-                            </div>
-
-                            <div className="flex items-center gap-4 border rounded-lg p-4 cursor-pointer hover:bg-gray-50">
-                              <RadioGroupItem value="razorpay" id="razorpay" />
-                              <Label htmlFor="razorpay" className="flex-1 cursor-pointer">
-                                <p className="font-medium">
-                                  Razorpay (UPI, Cards, Wallets)
+                      {addresses.length > 0 && (
+                        <RadioGroup
+                          value={selectedAddressId ?? undefined}
+                          onValueChange={setSelectedAddressId}
+                        >
+                          {addresses.map((addr) => (
+                            <div
+                              key={addr.id}
+                              className="flex items-start gap-3 rounded-lg border border-gray-300 p-4 mb-3 cursor-pointer hover:border-gray-400 transition-colors"
+                            >
+                              <RadioGroupItem value={addr.id} id={addr.id} />
+                              <Label htmlFor={addr.id} className="flex-1 cursor-pointer">
+                                <p className="font-semibold text-gray-900">
+                                  {addr.street}
+                                  {addr.defaultAddress && (
+                                    <span className="ml-2 rounded bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-800">
+                                      Default
+                                    </span>
+                                  )}
+                                </p>
+                                <p className="text-sm text-gray-700 mt-1">
+                                  {addr.city}, {addr.state} {addr.postalCode}
+                                  <br />
+                                  {addr.country}
                                 </p>
                               </Label>
                             </div>
-                          </RadioGroup>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                          ))}
+                        </RadioGroup>
+                      )}
 
-                  {paymentMethod === "cod" && (
-                    <div className="rounded bg-blue-50 p-4 text-center border border-blue-200">
-                      <p className="text-sm text-blue-900">
-                        You’ll pay ₹{(finalTotal).toLocaleString()}.00 at delivery.
-                      </p>
+                      <AddressFormDialog
+                        isOpen={showAddForm}
+                        onClose={() => setShowAddForm(false)}
+                        onSubmit={handleAddAddress}
+                      />
                     </div>
-                  )}
 
-                  {paymentMethod === "razorpay" && (
-                    <div className="rounded bg-gray-50 p-4 text-center">
-                      <p className="text-sm text-gray-700">
-                        You will be redirected to Razorpay to complete the payment securely.
-                      </p>
+                    {/* Payment Section */}
+                    <div className="space-y-4">
+                      <h2 className="text-xl font-bold text-gray-900">Payment</h2>
+
+                      <FormField
+                        control={form.control}
+                        name="paymentMethod"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <RadioGroup
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                                className="space-y-3"
+                              >
+                                <div className="flex items-center gap-3 border border-gray-300 rounded-lg p-4 cursor-pointer hover:border-gray-400 transition-colors">
+                                  <RadioGroupItem value="cod" id="cod" />
+                                  <Label htmlFor="cod" className="flex-1 cursor-pointer">
+                                    <p className="font-semibold text-gray-900">Cash on Delivery</p>
+                                    <p className="text-sm text-gray-700">Pay when you receive</p>
+                                  </Label>
+                                </div>
+
+                                <div className="flex items-center gap-3 border border-gray-300 rounded-lg p-4 cursor-pointer hover:border-gray-400 transition-colors">
+                                  <RadioGroupItem value="razorpay" id="razorpay" />
+                                  <Label htmlFor="razorpay" className="flex-1 cursor-pointer">
+                                    <p className="font-semibold text-gray-900">
+                                      Razorpay (UPI, Cards, Wallets)
+                                    </p>
+                                  </Label>
+                                </div>
+                              </RadioGroup>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {paymentMethod === "cod" && (
+                        <div className="rounded-lg bg-blue-50 p-4 text-center border border-blue-100">
+                          <p className="text-sm font-medium text-gray-800">
+                            You'll pay <span className="font-bold text-gray-900">₹{(cart?.cartTotalPrice! || "").toLocaleString()}.00</span> at delivery.
+                          </p>
+                        </div>
+                      )}
+
+                      {paymentMethod === "razorpay" && (
+                        <div className="rounded-lg bg-gray-50 p-4 text-center border border-gray-200">
+                          <p className="text-sm font-medium text-gray-800">
+                            You will be redirected to Razorpay to complete the payment securely.
+                          </p>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
 
-                {/* ---------- DISCOUNT ---------- */}
-                <div className="space-y-2">
-                  <FormField
-                    control={form.control}
-                    name="discountCode"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <div className="flex gap-2">
-                            <Input
-                              {...field}
-                              placeholder="Discount code"
-                              className="flex-1"
-                            />
-                            <Button type="button" variant="outline" onClick={applyDiscount}>
-                              Apply
-                            </Button>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  {discount > 0 && (
-                    <p className="text-sm text-green-600">
-                      Discount applied: -₹{discount.toLocaleString()}
-                    </p>
-                  )}
-                </div>
+                    <div className="space-y-2">
+                      <FormField
+                        control={form.control}
+                        name="discountCode"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <div className="flex gap-2">
+                                <Input
+                                  {...field}
+                                  placeholder="Discount code or gift card"
+                                  className="flex-1 border-gray-300"
+                                />
+                                <Button 
+                                  type="button" 
+                                  variant="outline" 
+                                  onClick={applyDiscount}
+                                  className="border-gray-300 font-semibold"
+                                >
+                                  Apply
+                                </Button>
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      {discount > 0 && (
+                        <p className="text-sm font-semibold text-green-600">
+                          Discount applied: -₹{discount.toLocaleString()}
+                        </p>
+                      )}
+                    </div>
 
-                {/* ---------- SUBMIT ---------- */}
-                <Button
-                  type="submit"
-                  disabled={isLoading || !selectedAddressId}
-                  className="w-full bg-black py-4 text-lg font-semibold text-white hover:bg-black/90 rounded"
-                >
-                  {isLoading ? "Processing…" : "Pay now"}
-                </Button>
+                    <Button
+                      type="submit"
+                      disabled={isLoading || !selectedAddressId}
+                      className="w-full bg-black py-6 text-base font-bold text-white hover:bg-black/90 rounded-lg disabled:bg-gray-400"
+                    >
+                      {isLoading ? "Processing…" : "Pay now"}
+                    </Button>
 
-                <div className="flex justify-center gap-6 border-t pt-6 text-sm">
-                  <Link href="#" className="underline hover:text-gray-900">
-                    Refund policy
-                  </Link>
-                  <Link href="#" className="underline hover:text-gray-900">
-                    Privacy policy
-                  </Link>
-                  <Link href="#" className="underline hover:text-gray-900">
-                    Terms of service
-                  </Link>
-                </div>
-              </form>
-            </Form>
-          </div>
-
-          <div className="h-fit rounded-lg border border-gray-200 bg-white p-6">
-            <div className="mb-6 pb-6 border-b border-gray-200">
-              {cart && cart!.items.map((item) => (
-                <div key={item.id} className="flex items-start gap-4 mb-4">
-                  <div className="relative h-16 w-16 flex-shrink-0">
-                    <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-black text-white text-xs font-bold">
-                      {item.quantity}
-                    </span>
-                    <img
-                      src={item.product.name || "/placeholder.svg"}
-                      alt={item.product.name}
-                      className="h-full w-full object-cover rounded"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium">{item.product.name}</p>
-                    <p className="text-lg font-bold">₹{item.product.price.toLocaleString()}.00</p>
-                  </div>
-                </div>
-              ))}
+                    {/* Footer Links */}
+                    <div className="flex justify-center gap-6 border-t border-gray-200 pt-6 text-xs text-gray-700 font-medium">
+                      <Link href="#" className="hover:text-gray-900 transition-colors">
+                        Refund policy
+                      </Link>
+                      <Link href="#" className="hover:text-gray-900 transition-colors">
+                        Privacy policy
+                      </Link>
+                      <Link href="#" className="hover:text-gray-900 transition-colors">
+                        Terms of service
+                      </Link>
+                    </div>
+                  </form>
+                </Form>
+              </div>
             </div>
 
-            <div className="space-y-3">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Subtotal</span>
-                <span>₹{subtotal.toLocaleString()}.00</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Shipping</span>
-                <span className="text-green-600">Free</span>
-              </div>
-              {discount > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Discount</span>
-                  <span className="text-green-600">-₹{discount.toLocaleString()}</span>
+            <div className="lg:col-span-1">
+              <div className="h-fit rounded-lg border border-gray-300 bg-gray-50 p-6 sticky top-8">
+                {/* Cart Items */}
+                <div className="mb-6 pb-6 border-b border-gray-300">
+                  {cart && cart.items.map((item) => (
+                    <div key={item.id} className="flex items-start gap-4 mb-4 last:mb-0">
+                      <div className="relative h-16 w-16 flex-shrink-0">
+                        <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-gray-800 text-white text-xs font-bold z-10">
+                          {item.quantity}
+                        </span>
+                        <img
+                          src={BASE_URL + item.product.images[0] || "/placeholder.svg"}
+                          alt={item.product.name}
+                          className="h-full w-full object-cover rounded-md border border-gray-200"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-gray-900 text-sm">
+                          {item.product.name}
+                        </p>
+                        <p className="text-base font-bold text-gray-900 mt-1">
+                          ₹{item.product.price.toLocaleString()}.00
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              )}
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Tax</span>
-                <span>₹{tax.toLocaleString()}</span>
-              </div>
 
-              <div className="border-t pt-3">
-                <div className="flex justify-between items-baseline">
-                  <span className="font-bold">Total</span>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-sm text-gray-600">INR</span>
-                    <span className="text-2xl font-bold">
-                      ₹{finalTotal.toLocaleString()}.00
-                    </span>
+                {/* Price Breakdown */}
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-800 font-medium">Subtotal</span>
+                    <span className="text-gray-900 font-semibold">₹{cart?.cartTotalPrice.toLocaleString()}.00</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-800 font-medium">Shipping</span>
+                    <span className="text-green-600 font-bold uppercase text-xs">Free</span>
+                  </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-800 font-medium">Discount</span>
+                      <span className="text-green-600 font-bold">-₹{discount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-800 font-medium">Tax</span>
+                    <span className="text-gray-900 font-semibold">%5</span>
+                  </div>
+
+                  {/* Total */}
+                  <div className="border-t border-gray-300 pt-4 mt-4">
+                    <div className="flex justify-between items-baseline">
+                      <span className="text-base font-bold text-gray-900">Total</span>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-xs text-gray-700 font-semibold uppercase">INR</span>
+                        <span className="text-2xl font-bold text-gray-900">
+                          ₹{cart?.cartTotalPrice.toLocaleString()}.00
+                        </span>
+                      </div>
+                    </div>
+                    <p className="mt-2 text-xs text-gray-700 font-medium">
+                      Including ₹{cart?.cartTotalPrice.toLocaleString()} in taxes
+                    </p>
                   </div>
                 </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  Including ₹{tax.toLocaleString()} in taxes
-                </p>
               </div>
             </div>
           </div>
@@ -460,4 +436,33 @@ export default function CheckoutPage() {
       </div>
     </div>
   );
+}
+
+
+function CheckOutHeader() {
+  return (
+    <header className="w-full bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:px-6">
+
+        <div className="flex-shrink-0 text-center">
+          <h1
+            className={`${nunitoSans.className} text-2xl md:text-[30px] font-bold tracking-wide`}
+          >
+            URBAN
+            <span className="text-[#9b1e22] mx-1">CRAVIN'</span>
+          </h1>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <Link
+            href="/cart"
+            aria-label="Cart"
+            className="relative hover:text-black transition-colors"
+          >
+            <ShoppingBag size={22} />
+          </Link>
+        </div>
+      </div>
+    </header>
+  )
 }

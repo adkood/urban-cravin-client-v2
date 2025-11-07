@@ -7,26 +7,40 @@ import Marquee from "@/components/marque";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TOP_HEADER_MARQUEE_ITEMS } from "@/lib/constants";
-import { filterProductsAction, FilterProductsData } from "@/data/product";
+import { filterProductsAction, FilterProductsData, Product } from "@/data/product";
 import { ChevronDown, Filter, X } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { Slider } from "@/components/ui/slider";
 
 const sortOptions = [
-  { value: "featured", label: "Featured" },
-  { value: "best-selling", label: "Best selling" },
   { value: "title-asc", label: "Alphabetically, A-Z" },
   { value: "title-desc", label: "Alphabetically, Z-A" },
   { value: "price-asc", label: "Price, low to high" },
   { value: "price-desc", label: "Price, high to low" },
-  { value: "date-desc", label: "Date, new to old" },
 ];
 
 interface ProductPageProps {
   categoryName: string;
 }
 
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 export default function ProductPage({ categoryName }: ProductPageProps) {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(0);
   const [isReady, setIsReady] = useState(false);
@@ -34,7 +48,9 @@ export default function ProductPage({ categoryName }: ProductPageProps) {
   // Filters
   const [sortBy, setSortBy] = useState("featured");
   const [showFilters, setShowFilters] = useState(false);
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 5000 });
+  const [tempPriceRange, setTempPriceRange] = useState({ min: 0, max: 5000 });
+
+const debouncedPriceRange = useDebounce(tempPriceRange, 500); // 500ms delay
 
   const pageSize = 9; // 3x3 grid
 
@@ -51,8 +67,8 @@ export default function ProductPage({ categoryName }: ProductPageProps) {
         categoryName,
         page: currentPage,
         size: pageSize,
-        minPrice: priceRange.min,
-        maxPrice: priceRange.max,
+        minPrice: debouncedPriceRange.min,
+        maxPrice: debouncedPriceRange.max,
       })) as FilterProductsData;
 
       setProducts(res.products ?? []);
@@ -64,7 +80,7 @@ export default function ProductPage({ categoryName }: ProductPageProps) {
     } finally {
       setIsReady(true);
     }
-  }, [categoryName, currentPage, priceRange, sortBy]);
+  }, [categoryName, currentPage, debouncedPriceRange]);
 
   useEffect(() => {
     fetchProducts();
@@ -74,6 +90,25 @@ export default function ProductPage({ categoryName }: ProductPageProps) {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  const sortedProducts = useMemo(() => {
+  if (!products.length) return [];
+
+  const sorted = [...products];
+
+  if (sortBy === "title-asc") {
+    sorted.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sortBy === "title-desc") {
+    sorted.sort((a, b) => b.name.localeCompare(a.name));
+  } else if (sortBy === "price-asc") {
+    sorted.sort((a, b) => a.price - b.price);
+  } else if (sortBy === "price-desc") {
+    sorted.sort((a, b) => b.price - a.price);
+  } 
+  // "featured" = default order (no sort)
+
+  return sorted;
+}, [products, sortBy]);
 
   // Full-section skeleton
   if (!isReady) {
@@ -151,7 +186,10 @@ export default function ProductPage({ categoryName }: ProductPageProps) {
               <div className="relative">
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
+                  onChange={(e) => {
+                    setCurrentPage(0);
+                    setSortBy(e.target.value)
+                  }}
                   className="px-4 py-2 border border-border rounded-lg bg-background text-sm font-medium appearance-none cursor-pointer pr-8"
                 >
                   {sortOptions.map((opt) => (
@@ -170,40 +208,39 @@ export default function ProductPage({ categoryName }: ProductPageProps) {
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Desktop Filters */}
-            <aside className="hidden lg:block space-y-6">
-              <div>
-                <h3 className="font-semibold mb-4">Price</h3>
-                <div className="flex gap-2">
-                  <input
-                    type="number"
-                    value={priceRange.min}
-                    onChange={(e) => setPriceRange({ ...priceRange, min: +e.target.value })}
-                    placeholder="Min"
-                    className="w-full px-3 py-2 border border-border rounded-lg text-sm"
-                  />
-                  <input
-                    type="number"
-                    value={priceRange.max}
-                    onChange={(e) => setPriceRange({ ...priceRange, max: +e.target.value })}
-                    placeholder="Max"
-                    className="w-full px-3 py-2 border border-border rounded-lg text-sm"
-                  />
-                </div>
-              </div>
+<aside className="hidden lg:block space-y-6">
+  <div>
+    <h3 className="font-semibold mb-4">Price</h3>
+    <div className="px-2">
+      <Slider
+        defaultValue={[tempPriceRange.min, tempPriceRange.max]}
+        value={[tempPriceRange.min, tempPriceRange.max]}
+        onValueChange={([min, max]) => setTempPriceRange({ min, max })}
+        min={0}
+        max={5000}
+        step={100}
+        className="w-full bg-black"
+      />
+      <div className="flex justify-between text-sm text-muted-foreground mt-2">
+        <span>₹{tempPriceRange.min}</span>
+        <span>₹{tempPriceRange.max}</span>
+      </div>
+    </div>
+  </div>
 
-        
+  <Button
+    variant="outline"
+    className="w-full"
+    onClick={() => {
+      setTempPriceRange({ min: 0, max: 5000 });
+      setSortBy("featured");
+      setCurrentPage(0);
+    }}
+  >
+    Clear Filters
+  </Button>
+</aside>
 
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => {
-                  setPriceRange({ min: 0, max: 5000 });
-                  setSortBy("featured");
-                }}
-              >
-                Clear Filters
-              </Button>
-            </aside>
 
             {/* Mobile Filters */}
             {showFilters && (
@@ -218,25 +255,23 @@ export default function ProductPage({ categoryName }: ProductPageProps) {
                   </div>
                   {/* Same filters as desktop */}
                   <div className="space-y-6">
-                    <div>
-                      <h3 className="font-semibold mb-4">Price</h3>
-                      <div className="flex gap-2">
-                        <input
-                          type="number"
-                          value={priceRange.min}
-                          onChange={(e) => setPriceRange({ ...priceRange, min: +e.target.value })}
-                          placeholder="Min"
-                          className="w-full px-3 py-2 border border-border rounded-lg text-sm"
-                        />
-                        <input
-                          type="number"
-                          value={priceRange.max}
-                          onChange={(e) => setPriceRange({ ...priceRange, max: +e.target.value })}
-                          placeholder="Max"
-                          className="w-full px-3 py-2 border border-border rounded-lg text-sm"
-                        />
-                      </div>
-                    </div>
+<div>
+  <h3 className="font-semibold mb-4">Price</h3>
+  <Slider
+    defaultValue={[tempPriceRange.min, tempPriceRange.max]}
+    value={[tempPriceRange.min, tempPriceRange.max]}
+    onValueChange={([min, max]) => setTempPriceRange({ min, max })}
+    min={0}
+    max={5000}
+    step={100}
+    className="w-full bg-black"
+  />
+  <div className="flex justify-between text-sm text-muted-foreground mt-2">
+    <span>₹{tempPriceRange.min}</span>
+    <span>₹{tempPriceRange.max}</span>
+  </div>
+</div>
+
                   </div>
                   <Button className="w-full mt-8" onClick={() => setShowFilters(false)}>
                     Apply
@@ -249,8 +284,8 @@ export default function ProductPage({ categoryName }: ProductPageProps) {
             <div className="lg:col-span-3">
               {products.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {products.map((product) => (
-                    <ProductCard key={product.id} product={product} size="tees" isfull />
+                  {sortedProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} size="tees" isfull animate={false} />
                   ))}
                 </div>
               ) : (

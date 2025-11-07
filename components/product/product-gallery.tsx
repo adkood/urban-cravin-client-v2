@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Image from "next/image"
 import { ChevronLeft, ChevronRight, Maximize2 } from "lucide-react"
+import { BASE_URL } from "@/lib/urls"
 
 interface ProductGalleryProps {
   images: Array<{
@@ -15,7 +16,8 @@ interface ProductGalleryProps {
 }
 
 export default function ProductGallery({ images, productName }: ProductGalleryProps) {
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  images = [...images].sort((a, b) => (b.primaryImage ? 1 : 0) - (a.primaryImage ? 1 : 0));
+  const [selectedImageIndex, setSelectedImageIndex] = useState(images.findIndex((i) => i.primaryImage))
   const [isZoomed, setIsZoomed] = useState(false)
 
   const selectedImage = images[selectedImageIndex]
@@ -33,7 +35,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
       {/* Main Image */}
       <div className="relative bg-muted rounded-lg overflow-hidden aspect-square group">
         <Image
-          src={selectedImage.url || "/placeholder.svg"}
+          src={BASE_URL+selectedImage.url}
           alt={selectedImage.altText}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -78,7 +80,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
               selectedImageIndex === index ? "border-primary" : "border-border hover:border-primary/50"
             }`}
           >
-            <Image src={image.url || "/placeholder.svg"} alt={image.altText} fill className="object-cover" />
+            <Image src={BASE_URL+image.url || "/placeholder.svg"} alt={image.altText} fill className="object-cover" />
           </button>
         ))}
       </div>

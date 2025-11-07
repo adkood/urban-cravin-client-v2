@@ -180,3 +180,43 @@ export async function filterProductsAction({
     throw err;
   }
 }
+
+export interface ProductResponse {
+  status: string;
+  message: string;
+  data: {
+    product: Product;
+  };
+}
+
+export async function getProductById(productId: string): Promise<{
+  success: boolean;
+  message: string;
+  data?: Product;
+}> {
+  try {
+    const res = await axios.get<ProductResponse>(
+      `http://3.110.127.251:8080/categories/products/${productId}`,
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    if (res.data.status.toLowerCase() === "success") {
+      return {
+        success: true,
+        message: res.data.message,
+        data: res.data.data.product,
+      };
+    }
+
+    return {
+      success: false,
+      message: res.data.message || "Failed to fetch product.",
+    };
+  } catch (error: any) {
+    console.error("Error fetching product:", error);
+    return {
+      success: false,
+      message: error?.response?.data?.message || "Something went wrong.",
+    };
+  }
+}

@@ -14,6 +14,9 @@ import {
   ApiCart,
 } from "@/data/cart"
 import Link from "next/link"
+import Image from "next/image"
+import { BASE_URL } from "@/lib/urls"
+import { Gift, Minus, Plus, Trash2 } from "lucide-react"
 
 interface CartClientProps {
   initialData: ActionResponse<GetCartResponse>
@@ -31,12 +34,13 @@ export default function CartClient({ initialData }: CartClientProps) {
     }
   }, [initialData])
 
-
   if (!initialData.success) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 min-h-[85svh] lg:px-8">
         <div className="py-12 text-center">
-          <p className="mb-4 text-lg text-red-600">{initialData.error.includes("403") ? "Error: You are not logged in" : initialData.error}</p>
+          <p className="mb-4 text-lg text-red-600">
+            {initialData.error.includes("403") ? "Error: You are not logged in" : initialData.error}
+          </p>
           <Button variant="default" onClick={() => window.location.reload()}>
             Retry
           </Button>
@@ -45,7 +49,6 @@ export default function CartClient({ initialData }: CartClientProps) {
     )
   }
 
-  // ⏳ Loading fallback
   if (!cart) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 min-h-[85svh] lg:px-8">
@@ -68,16 +71,14 @@ export default function CartClient({ initialData }: CartClientProps) {
     setIsLoading(true)
 
     if (newQuantity > item.quantity) {
-      // Add one
       const res = await addToCart({
         productId: item.product.id,
-        size: "M", // or derive from product if you store it
+        size: "M",
         qty: 1,
       })
       if (res.success) setCart(res.data.cart)
       else alert(res.error)
     } else if (newQuantity < item.quantity) {
-      // Remove one
       const res = await removeFromCart({
         cartItemId: item.id,
         qty: 1,
@@ -89,22 +90,17 @@ export default function CartClient({ initialData }: CartClientProps) {
     setIsLoading(false)
   }
 
-  // ❌ Remove item completely
   const removeItem = async (itemId: string) => {
     setIsLoading(true)
     const res = await removeFromCart({
       cartItemId: itemId,
-      qty: 9999, // high number to remove all qty of that item
+      qty: 9999,
     })
     setIsLoading(false)
 
     if (res.success) setCart(res.data.cart)
     else alert(res.error)
   }
-
-  // Dummy placeholders for optional features
-  const handleAddGiftWrap = async () => setGiftWrapAdded(!giftWrapAdded)
-  const handleSaveNote = async () => alert("Note saved!")
 
   const subtotal = cart.cartTotalPrice
   const giftWrapPrice = giftWrapAdded ? 100 : 0
@@ -129,109 +125,166 @@ export default function CartClient({ initialData }: CartClientProps) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 min-h-[85svh] lg:px-8">
       <h1 className="mb-8 text-3xl font-bold">Your Cart</h1>
+      {/* Header Row */}
+      <div className="mb-6 hidden border-b pb-4 md:grid md:grid-cols-12 md:gap-4 text-sm font-semibold uppercase tracking-wide">
+        <div className="col-span-5">Product</div>
+        <div className="col-span-2 text-center">Price</div>
+        <div className="col-span-3 text-center">Quantity</div>
+        <div className="col-span-2 text-right">Total</div>
+      </div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
-        {/* 🧾 Cart Items */}
-        <div className="lg:col-span-2">
-          <div className="hidden border-b border-border pb-4 md:block">
-            <div className="grid grid-cols-12 gap-4 text-sm font-semibold">
-              <div className="col-span-5">Product</div>
-              <div className="col-span-3 text-center">Price</div>
-              <div className="col-span-2 text-center">Quantity</div>
-              <div className="col-span-2 text-right">Total</div>
+      {/* Cart Items */}
+      <div className="space-y-6 border-b pb-6">
+        {cart.items.map((item) => {
+          const product = item.product
+          const displayPrice = item.unitPrice
+
+          return (
+            <div
+              key={item.id}
+              className={`${
+                isLoading ? "opacity-60 pointer-events-none" : ""
+              }`}
+            >
+              {/* Mobile Layout */}
+              <div className="md:hidden flex flex-col gap-3 p-4 bg-white rounded-lg border border-gray-200">
+                <div className="flex gap-3">
+                  <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded">
+                    <Link href={`/product/${product.id}`}>
+                      <Image
+                        src={BASE_URL + product.images[0]}
+                        alt={product.name}
+                        fill
+                        className="object-contain"
+                      />
+                    </Link>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <Link href={`/product/${product.id}`}>
+                      <h3 className="font-semibold uppercase tracking-wide text-sm line-clamp-2">{product.name}</h3>
+                    </Link>
+                    <p className="text-sm text-gray-600 mt-1">RS.{displayPrice.toLocaleString()}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="inline-flex items-center gap-2 rounded-md border border-gray-300 px-3 py-1.5">
+                    <button
+                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      disabled={isLoading || item.quantity <= 1}
+                      className="text-gray-600 hover:text-black disabled:opacity-50"
+                    >
+                      <Minus size={14} />
+                    </button>
+                    <span className="w-6 text-center text-sm font-medium">{item.quantity}</span>
+                    <button
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      disabled={isLoading}
+                      className="text-gray-600 hover:text-black disabled:opacity-50"
+                    >
+                      <Plus size={14} />
+                    </button>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-semibold">
+                      RS.{item.itemTotalPrice.toLocaleString()}
+                    </span>
+                    <button
+                      onClick={() => removeItem(item.id)}
+                      disabled={isLoading}
+                      className="text-gray-500 hover:text-red-600 disabled:opacity-50 p-1"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Desktop Layout */}
+              <div className="hidden md:grid grid-cols-12 items-center gap-4">
+                <div className="col-span-5 flex items-center gap-4">
+                  <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded">
+                    <Link href={`/product/${product.id}`}>
+                      <Image
+                        src={BASE_URL + product.images[0]}
+                        alt={product.name}
+                        fill
+                        className="object-contain"
+                      />
+                    </Link>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Link href={`/product/${product.id}`}>
+                      <h3 className="font-semibold uppercase tracking-wide">{product.name}</h3>
+                    </Link>
+                    <button
+                      onClick={() => removeItem(item.id)}
+                      disabled={isLoading}
+                      className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-600 disabled:opacity-50"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="col-span-2 text-center">
+                  <span className="text-sm font-medium">RS.{displayPrice.toLocaleString()}</span>
+                </div>
+
+                <div className="col-span-3 flex justify-center">
+                  <div className="inline-flex items-center gap-3 rounded-md border border-gray-300 px-4 py-2">
+                    <button
+                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      disabled={isLoading || item.quantity <= 1}
+                      className="text-gray-600 hover:text-black disabled:opacity-50"
+                    >
+                      <Minus size={16} />
+                    </button>
+                    <span className="w-8 text-center font-medium">{item.quantity}</span>
+                    <button
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      disabled={isLoading}
+                      className="text-gray-600 hover:text-black disabled:opacity-50"
+                    >
+                      <Plus size={16} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="col-span-2 text-right">
+                  <span className="text-sm font-semibold">
+                    RS.{item.itemTotalPrice.toLocaleString()}
+                  </span>
+                </div>
+              </div>
             </div>
-          </div>
+          )
+        })}
+      </div>
 
-          <div className="space-y-4 py-4">
-            {cart.items.map((item) => {
-              const product = item.product
-              const discountedPrice =
-                product.discountAmount !== null
-                  ? product.price - product.discountAmount
-                  : product.price * (1 - product.discountPercentage / 100)
-
-              return (
-                <CartItem
-                  key={item.id}
-                  item={{
-                    id: item.id,
-                    title: product.name,
-                    image: `/products/${product.sku}.jpg`,
-                    price: discountedPrice,
-                    quantity: item.quantity,
-                  }}
-                  onUpdateQuantity={updateQuantity}
-                  onRemove={removeItem}
-                  disabled={isLoading}
-                />
-              )
-            })}
-          </div>
-
-          {/* 🎁 Gift Wrap */}
-          <div className="border-t border-border pt-4">
-            <button
-              onClick={handleAddGiftWrap}
-              disabled={isLoading}
-              className="flex w-full items-center gap-3 rounded-lg p-4 text-left hover:bg-secondary disabled:opacity-50"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                width="24"
-                height="24"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="20 12 20 22 4 22 4 12"></polyline>
-                <rect x="2" y="7" width="20" height="5"></rect>
-                <line x1="12" y1="22" x2="12" y2="7"></line>
-                <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
-                <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
-              </svg>
-              <span className="text-sm">
-                <span className="font-semibold">Do you want a gift wrap?</span>{" "}
-                Only <span className="font-semibold">Rs.100.00</span>
-              </span>
-              {giftWrapAdded && (
-                <span className="ml-auto text-green-600">Added</span>
-              )}
-            </button>
-          </div>
-
-          {/* 📝 Order Notes */}
-          <div className="border-t border-border pt-4">
-            <label htmlFor="note" className="mb-2 block text-sm font-semibold">
-              {note ? "Edit Order Note" : "Add Order Note"}
-            </label>
-            <textarea
-              id="note"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="How can we help you?"
-              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm placeholder-muted-foreground focus:border-primary focus:outline-none"
-              rows={4}
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-2"
-              onClick={handleSaveNote}
-              disabled={isLoading}
-            >
-              Save Note
-            </Button>
-          </div>
+      {/* Checkout Section */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-start justify-between gap-6 pt-6">
+        <div className="text-sm text-gray-600 max-w-md">
+          TAX INCLUDED AND SHIPPING CALCULATED AT CHECKOUT
         </div>
-
-        {/* 💰 Summary */}
-        <CartSummary
-          subtotal={subtotal}
-          giftWrapPrice={giftWrapPrice}
-          total={total}
-        />
+        <div className="text-right w-full sm:w-auto">
+          <div className="mb-4 flex items-baseline justify-end gap-2">
+            <span className="text-sm font-medium uppercase tracking-wide">Subtotal:</span>
+            <span className="text-2xl font-bold">RS.{total.toLocaleString()}</span>
+          </div>
+          <Button
+            disabled={isLoading}
+            className="w-full sm:w-auto rounded-md bg-black px-12 py-3 text-sm font-medium uppercase tracking-wide text-white hover:bg-gray-800 disabled:opacity-50"
+            asChild={!isLoading}
+          >
+            {isLoading ? (
+              <span>Processing...</span>
+            ) : (
+              <Link href="/checkout">Check Out</Link>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   )

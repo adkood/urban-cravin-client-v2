@@ -1,5 +1,6 @@
 "use client"
 
+import { BASE_URL } from "@/lib/urls"
 import { Trash2, Plus, Minus } from "lucide-react"
 import Image from "next/image"
 
@@ -22,11 +23,10 @@ export function CartItem({ item, onUpdateQuantity, onRemove, disabled = false }:
   return (
     <div className="border-b border-border pb-4 last:border-0">
       <div className={`grid gap-4 md:grid-cols-12 ${disabled ? "opacity-60 pointer-events-none" : ""}`}>
-        {/* Product Info */}
         <div className="col-span-12 md:col-span-5">
           <div className="flex gap-4">
-            <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg bg-secondary">
-              <Image src={item.image || "/placeholder.svg"} alt={item.title} fill className="object-cover" />
+            <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg">
+              <Image src={BASE_URL+item.image} alt={item.title} fill className="object-contain" />
             </div>
             <div className="flex flex-1 flex-col justify-between">
               <div>
@@ -44,12 +44,10 @@ export function CartItem({ item, onUpdateQuantity, onRemove, disabled = false }:
           </div>
         </div>
 
-        {/* Price */}
         <div className="hidden md:col-span-3 md:flex md:items-center md:justify-center">
           <span className="text-sm font-semibold">Rs.{item.price.toLocaleString()}</span>
         </div>
 
-        {/* Quantity */}
         <div className="col-span-6 md:col-span-2">
           <div className="flex items-center justify-between gap-1 rounded-lg border border-border bg-secondary">
             <button
@@ -82,7 +80,6 @@ export function CartItem({ item, onUpdateQuantity, onRemove, disabled = false }:
           </div>
         </div>
 
-        {/* Total */}
         <div className="col-span-6 flex items-center justify-end md:col-span-2 md:justify-end">
           <span className="text-right text-sm font-semibold">Rs.{itemTotal.toLocaleString()}</span>
         </div>

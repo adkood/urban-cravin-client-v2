@@ -5,14 +5,14 @@ import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { CLIENT_REGISTERURL } from "@/lib/urls";
 import { toast } from "sonner";
 
 const signupSchema = z
   .object({
-    username: z.string().min(1, "Name is required"),
+    username: z.string().min(5, "username should be in 5 to 10 characters"),
     email: z.string().email("Invalid email address"),
     password: z
       .string()
@@ -44,15 +44,20 @@ const Signup = () => {
           headers: { "Content-Type": "application/json" },
         });
         if(resp.data.status.toLocaleLowerCase() == "success") {
-          toast.success("Registered Successfully!");
-          router.push("/");
+          toast.success(resp.data.message);
+          setTimeout(() => router.push("/login"),2000)
         }
         else if (resp.data.status.toLocaleLowerCase() == "error"){
           toast.error("Invalid Inputs!!");
         }
-        router.push("/");
-      } catch (error) {
-        toast.error("Registration failed");
+      } catch (error : any) {
+        console.log(error)
+        if(isAxiosError(error)) {
+          toast.error(error.response?.data.message || "Something went wrong");
+        }
+        else {
+          toast.error(error?.message || "Something went wrong");
+        }
       }
     },
   });
@@ -81,7 +86,7 @@ const Signup = () => {
               htmlFor="username"
               className="block text-sm font-semibold text-gray-700 mb-2"
             >
-              Full Name
+              Username
             </label>
             <input
               id="username"

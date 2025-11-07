@@ -23,6 +23,7 @@ import { GET_USER_DETAILSURL } from "@/lib/urls"
 import useSWR from "swr"
 import { fetcher } from "@/lib/utils"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { redirect } from "next/navigation"
 
 export default function ProductReviews({ productId }: { productId: string }) {
   const [reviews, setReviews] = useState<Review[]>([])
@@ -85,6 +86,9 @@ export default function ProductReviews({ productId }: { productId: string }) {
               : r
           )
         )
+        if(res.error.includes("401")) {
+          redirect("/login")
+        }
         console.error("Failed to toggle like:", res.error)
       }
     })
@@ -96,7 +100,12 @@ export default function ProductReviews({ productId }: { productId: string }) {
       if (res.success) {
         setReviews((prev) => prev.filter((r) => r.id !== reviewId))
       } else {
+
+        if(res.error.includes("401")) {
+          redirect("/login")
+        }
         console.error("Failed to delete review:", res.error)
+
       }
     })
   }

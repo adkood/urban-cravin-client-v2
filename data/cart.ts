@@ -1,7 +1,7 @@
 "use server"
 
 import { ADD_CART_URL, GET_CART_URL, REMOVE_CART_URL } from "@/lib/urls"
-import axios from "axios"
+import axios, { isAxiosError } from "axios"
 import { cookies } from "next/headers"
 
 export interface ApiProduct {
@@ -14,6 +14,7 @@ export interface ApiProduct {
   active: boolean
   weight: number
   sku: string
+  images : string[]
 }
 
 export interface ApiCartItem {
@@ -215,6 +216,13 @@ export async function addToCart(
     }
   } catch (error) {
     console.error("Error adding to cart:", error)
+
+    if(isAxiosError(error)) {
+        return {
+      success: false,
+      error: error.response?.data.message ||  "Couldn't add to Cart",
+    }
+    }
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error occurred",
