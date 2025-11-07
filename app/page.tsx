@@ -31,7 +31,7 @@ export default function Home() {
             size: 8,
           }) as Promise<FilterProductsData>,
           filterProductsAction({
-            categoryName: "OVERSIZED TEES",
+            categoryName: "SWEATPANTS",
             page: 0,
             size: 8,
           }) as Promise<FilterProductsData>,
@@ -93,7 +93,7 @@ export default function Home() {
         title="Chill Fits"
         products={pants}
         isLoading={false}
-        size="tees"
+        size="pants"
       />
 
       <FeaturedProductsCarousel />

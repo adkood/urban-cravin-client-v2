@@ -77,10 +77,9 @@ const ProductCard = ({
         <Link href={`/product/${product.id}`}>
          <h3 className="text-xl font-normal mb-1">{product.name}</h3>
         </Link>
-<p className="text-lg font-light mb-2">
-  <span className="text-sm font-light align-middle mr-1 text-pink-50">₹</span>
-  {product.price.toLocaleString("en-IN")}
-</p>
+        <p className="text-lg font-light mb-2">
+        Rs {product.price.toLocaleString("en-IN")}
+        </p>
 
 
         {(

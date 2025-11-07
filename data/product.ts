@@ -87,6 +87,7 @@ export interface FilterProductsParams {
   maxPrice?: number;
   categoryName?: string;
   search?: string;
+  tags?: string,
 }
 
 export interface ProductImage {
@@ -94,6 +95,7 @@ export interface ProductImage {
   url: string;
   primaryImage: boolean;
   altText: string;
+  tag : string
 }
 export interface ProductCategory {
   id: string;
@@ -141,6 +143,7 @@ export async function filterProductsAction({
   size = 5,
   minPrice,
   maxPrice,
+  tags,
   categoryName,
   search,
 }: FilterProductsParams): Promise<FilterProductsData> {
@@ -156,6 +159,7 @@ export async function filterProductsAction({
     if (maxPrice !== undefined) params.append("maxPrice", maxPrice.toString());
     if (categoryName) params.append("categoryName", categoryName);
     if (search) params.append("search", search);
+    if (tags) params.append("tags", tags);
 
     const res = await fetch(
       `${BASE_URL}/categories/products/filter?${params.toString()}`,
