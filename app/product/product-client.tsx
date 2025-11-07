@@ -10,6 +10,7 @@ import { ChevronLeft, ChevronRight, Heart, RotateCcw, Shield, Truck } from "luci
 import { toast } from "sonner";
 import { addToCart } from "@/data/cart";
 import type { Product } from "@/data/product";
+import { useCartStore } from "@/stores/cartStore";
 
 type SizesType = "S" | "M" | "L" | "XL";
 
@@ -19,7 +20,7 @@ export default function ProductClient({ product }: { product: Product }) {
   const [isFavorite, setIsFavorite] = useState(false);
   const [showSizeChart, setShowSizeChart] = useState(false);
   const [isPending, startTransition] = useTransition();
-
+  const setCart = useCartStore((state) => state.setCart);
   const discountedPrice =
     product.discountPercentage
       ? product.price - (product.price * (product.discountPercentage / 100))
@@ -36,6 +37,7 @@ export default function ProductClient({ product }: { product: Product }) {
 
         console.log(res)
         if(res.success) {
+          setCart(res.data.cart);
           toast.success("Item added to cart!");
         }
         else {

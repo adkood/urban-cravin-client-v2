@@ -8,6 +8,8 @@ import { useState, useEffect, useRef } from "react";
 import UserAvatar from "../cards/user-profile";
 import { filterProductsAction, type Product } from "@/data/product";
 import { BASE_URL } from "@/lib/urls";
+import CartInitializer from "@/hooks/cartInitailizer";
+import CartIcon from "../cart-icon";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -50,6 +52,7 @@ export default function Header() {
 
   return (
     <header className="w-full bg-white relative">
+      <CartInitializer/>
       <div className="border-b border-gray-200">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-3 sm:gap-6">
@@ -134,15 +137,7 @@ export default function Header() {
               <button className="hidden sm:block hover:opacity-70 transition-opacity">
                 <Heart className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
-              <Link
-                href="/cart"
-                className="relative hover:opacity-70 transition-opacity"
-              >
-                <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6" />
-                <span className="absolute -top-2 -right-2 bg-[#9b1e22] text-white text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs">
-                  0
-                </span>
-              </Link>
+              <CartIcon/>
             </div>
           </div>
 

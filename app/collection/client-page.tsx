@@ -255,22 +255,22 @@ const debouncedPriceRange = useDebounce(tempPriceRange, 500); // 500ms delay
                   </div>
                   {/* Same filters as desktop */}
                   <div className="space-y-6">
-<div>
-  <h3 className="font-semibold mb-4">Price</h3>
-  <Slider
-    defaultValue={[tempPriceRange.min, tempPriceRange.max]}
-    value={[tempPriceRange.min, tempPriceRange.max]}
-    onValueChange={([min, max]) => setTempPriceRange({ min, max })}
-    min={0}
-    max={5000}
-    step={100}
-    className="w-full bg-black"
-  />
-  <div className="flex justify-between text-sm text-muted-foreground mt-2">
-    <span>₹{tempPriceRange.min}</span>
-    <span>₹{tempPriceRange.max}</span>
-  </div>
-</div>
+                    <div>
+                    <h3 className="font-semibold mb-4">Price</h3>
+                    <Slider
+                      defaultValue={[tempPriceRange.min, tempPriceRange.max]}
+                      value={[tempPriceRange.min, tempPriceRange.max]}
+                      onValueChange={([min, max]) => setTempPriceRange({ min, max })}
+                      min={0}
+                      max={5000}
+                      step={100}
+                      className="w-full bg-black"
+                    />
+                    <div className="flex justify-between text-sm text-muted-foreground mt-2">
+                      <span>₹{tempPriceRange.min}</span>
+                      <span>₹{tempPriceRange.max}</span>
+                    </div>
+                  </div>
 
                   </div>
                   <Button className="w-full mt-8" onClick={() => setShowFilters(false)}>

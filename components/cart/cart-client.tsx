@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { CartItem } from "@/components/cards/cart-item"
-import { CartSummary } from "@/components/cart-summary"
 import {
   addToCart,
   removeFromCart,
@@ -17,6 +15,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { BASE_URL } from "@/lib/urls"
 import { Gift, Minus, Plus, Trash2 } from "lucide-react"
+import { useCartStore } from "@/stores/cartStore"
 
 interface CartClientProps {
   initialData: ActionResponse<GetCartResponse>
@@ -27,10 +26,12 @@ export default function CartClient({ initialData }: CartClientProps) {
   const [note, setNote] = useState("")
   const [giftWrapAdded, setGiftWrapAdded] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const setCartCount = useCartStore((state) => state.setCart);
 
   useEffect(() => {
     if (initialData.success && initialData.data?.cart) {
       setCart(initialData.data.cart)
+      setCartCount(initialData.data.cart)
     }
   }, [initialData])
 
@@ -76,14 +77,20 @@ export default function CartClient({ initialData }: CartClientProps) {
         size: "M",
         qty: 1,
       })
-      if (res.success) setCart(res.data.cart)
+      if (res.success) {
+        setCartCount(res.data.cart)
+        setCart(res.data.cart)
+      }
       else alert(res.error)
     } else if (newQuantity < item.quantity) {
       const res = await removeFromCart({
         cartItemId: item.id,
         qty: 1,
       })
-      if (res.success) setCart(res.data.cart)
+      if (res.success) {
+        setCartCount(res.data.cart)
+        setCart(res.data.cart)
+      }
       else alert(res.error)
     }
 
@@ -98,7 +105,10 @@ export default function CartClient({ initialData }: CartClientProps) {
     })
     setIsLoading(false)
 
-    if (res.success) setCart(res.data.cart)
+    if (res.success) {
+      setCartCount(res.data.cart)
+      setCart(res.data.cart)
+    }
     else alert(res.error)
   }
 

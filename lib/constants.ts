@@ -1,5 +1,3 @@
-import { DHHProductShocase } from "@/components/fav-clothing-caraousel";
-
 export const NAV_ITEMS = [
     { label: 'BAGGY VEST',HREF : "/collection/baggy-vests" },
     { label: 'OVERSIZED TEES',  badge: 'HOT',HREF : "/collection/oversized-tees"  },
@@ -45,59 +43,6 @@ export const COLLECTIONS = [
     link: '/collection/oversized-tees',
     alt: 'Woman wearing pink t-shirt and plaid skirt'
   }
-];
-
-export const DHH_SHOWCASE_LISTING : DHHProductShocase[] = [
-    {
-      id: "0f85508e-6c85-4859-bc47-958077605229",
-      name: '"Talwinder Vibes" Graphic Tee - Echoes of the Underground',
-      price: "Inr. 900",
-      productImage:
-        "/Untitled-design_20250418_122726_0000-1536x1536.png",
-      backgroundImage:
-        "/827133dcae699b08432ef14e064cd4ff.jpg",
-      link: "/products/wilkinson-cardigan",
-    },
-    {
-      id: "8c30e608-f30d-47c4-8537-83d871ecc9ae",
-      name: "Seedhe Maut blackout Essential",
-      price: "Inr. 900",
-      productImage:
-        "/Black-and-White-Modern-Trendy-Simple-Typographic-Design-Studio-Font-Logo_20250415_160433_0000 (1).png",
-      backgroundImage:
-        "/2f4d65816df321ccf497273639cb0223.jpg",
-      link: "/products/bexley-jacket",
-    },
-    // {
-    //   id: 4,
-    //   name: "Still here: Kr$na mode",
-    //   price: "Inr. 900",
-    //   productImage:
-    //     "/dollar-sign-one-time_20250414_213933_0000-2-pdf.jpg",
-    //   backgroundImage:
-    //     "/2a6d8946f4770d4b53f820dea433fdd0.jpg",
-    //   link: "/products/beckett-cable-knit-cardigan",
-    // },
-    // {
-    //   id: 5,
-    //   name: "Cactus jack print - Travis Scott",
-    //   price: "Inr. 900",
-    //   productImage:
-    //     "/2_20250415_160742_0001-1536x1536.png",
-    //   backgroundImage:
-    //     "/fef0cbb4e220775b5e44a18d7ecfd1cd.jpg",
-    //   link: "/products/ford-crew",
-    // },
-    // {
-    //   id: 6,
-    //   name: "Kendrick Mode: No Additives",
-    //   price: "Inr. 900",
-    //   productImage:
-    //     "/1_20250415_160623_0000-1536x1536.png",
-    //   backgroundImage:
-    //     "/webp tshirt/kenny.jpg",
-    //   link: "/products/hudson-aran-jumper",
-    // },
 ];
 
 export const TESTIMONIALS = [
