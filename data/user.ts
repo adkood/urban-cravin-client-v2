@@ -3,6 +3,9 @@
 import { ADD_ADDRESS_URL, BASE_URL, DELETE_ADDRESS_URL, GET_ADDRESSES_URL, UPDATE_ADDRESS_URL } from "@/lib/urls"
 import { ActionResponse, getAuthToken } from "./cart"
 import axios, { isAxiosError } from "axios"
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+
 
 export interface AddressPayload {
   street: string
@@ -359,4 +362,12 @@ export async function resendVerificationEmail(
       error: error instanceof Error ? error.message : "Unknown error occurred",
     };
   }
+}
+
+export async function logout() {
+  // Delete the auth cookie
+  (await cookies()).delete('Authorization');
+
+  // Redirect to login page
+  redirect('/login');
 }

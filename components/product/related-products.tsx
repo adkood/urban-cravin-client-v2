@@ -6,7 +6,7 @@ import ProductCard from "@/components/cards/product-card";
 import { filterProductsAction, FilterProductsData } from "@/data/product";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function RelatedProducts() {
+export default function RelatedProducts({category,productId} : {category : string, productId : string}) {
   const [products, setProducts] = useState<any[]>([]);
   const [isReady, setIsReady] = useState(false); // ← Only render when ready
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -17,12 +17,12 @@ export default function RelatedProducts() {
     async function fetchRelated() {
       try {
         const res = (await filterProductsAction({
-          categoryName: "OVERSIZED TEES",
+          categoryName: category,
           page: 0,
           size: 3,
         })) as FilterProductsData;
 
-        setProducts(res.products ?? []);
+        setProducts(res.products.filter(v => v.id !== productId) ?? []);
       } catch (err) {
         console.error("Error:", err);
         setProducts([]);

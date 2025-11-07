@@ -11,12 +11,13 @@ interface ProductGalleryProps {
     url: string
     primaryImage: boolean
     altText: string
+    tag: string
   }>
   productName: string
 }
 
 export default function ProductGallery({ images, productName }: ProductGalleryProps) {
-  images = [...images].sort((a, b) => (b.primaryImage ? 1 : 0) - (a.primaryImage ? 1 : 0));
+  images = [...images.filter(v => v.tag !== "bg")].sort((a, b) => (b.primaryImage ? 1 : 0) - (a.primaryImage ? 1 : 0));
   const [selectedImageIndex, setSelectedImageIndex] = useState(images.findIndex((i) => i.primaryImage))
   const [isZoomed, setIsZoomed] = useState(false)
 

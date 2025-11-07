@@ -199,7 +199,7 @@ export default function ProductClient({ product }: { product: Product }) {
         </div>
       </div>
 
-      <RelatedProducts />
+      <RelatedProducts category={product.category.name} productId={product.id}/>
       <ProductReviews productId={product.id} />
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { MapPin, ShoppingBag, User, Settings, LogOut } from "lucide-react"
 import { Card } from "@/components/ui/card"
+import { logout } from "@/data/user"
 
 interface AccountSidebarProps {
   activeTab: string
@@ -35,7 +36,9 @@ export default function AccountSidebar({ activeTab, setActiveTab }: AccountSideb
         })}
 
         <div className="pt-4 border-t border-border">
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left hover:bg-muted text-foreground transition">
+          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left hover:bg-muted text-foreground transition" onClick={async () => {
+            await logout();
+          }}>
             <LogOut className="w-5 h-5" />
             <span className="text-sm font-medium">Logout</span>
           </button>
