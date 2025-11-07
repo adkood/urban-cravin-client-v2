@@ -20,7 +20,8 @@ const sortOptions = [
 ];
 
 interface ProductPageProps {
-  categoryName: string;
+  categoryName?: string;
+  tagName?: string
 }
 
 function useDebounce<T>(value: T, delay: number): T {
@@ -39,7 +40,7 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-export default function ProductPage({ categoryName }: ProductPageProps) {
+export default function ProductPage({ categoryName, tagName }: ProductPageProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(0);
@@ -64,9 +65,10 @@ const debouncedPriceRange = useDebounce(tempPriceRange, 500); // 500ms delay
       setIsReady(false);
 
       const res = (await filterProductsAction({
-        categoryName,
+        categoryName: categoryName??undefined,
         page: currentPage,
         size: pageSize,
+        tags: tagName??undefined,
         minPrice: debouncedPriceRange.min,
         maxPrice: debouncedPriceRange.max,
       })) as FilterProductsData;
