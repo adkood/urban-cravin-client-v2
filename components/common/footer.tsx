@@ -27,13 +27,15 @@ const Footer = () => {
 
   const brandLinks = [
     { label: "About Us", href: "/about" },
+    { label : "" ,href : ""}
   ];
 
   const contactLinks = [
     { label: "My Account", href: "/account" },
-    { label: "Order Tracking", href: "/tracking" },
-    { label: "Returns & Exchanges", href: "/returns" },
-    { label: "Contact Us", href: "/contact" },
+    { label: "Order Tracking", href: "/account" },
+    { label: "Returns & Exchanges", href: "/return-policies" },
+    { label: "Terms & Conditions", href: "/terms" },
+    { label: "Shipping Policies", href: "/policies" },
   ];
 
   const MobileAccordion = ({
