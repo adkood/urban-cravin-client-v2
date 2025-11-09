@@ -1,6 +1,5 @@
 "use client";
 
-import { Heart } from 'lucide-react';
 import React from 'react';
 import AnimatedContent from '../ui/AnimatedContent';
 import Link from 'next/link';
@@ -47,29 +46,14 @@ const ProductCard = ({
         className={`flex-none ${isfull ? "w-full" : "w-[calc(25%-18px)] min-w-[400px]"}`}
       >
         <div className="group relative bg-white rounded-lg overflow-hidden mb-4">
-         
-          
-          <button
-            onClick={() => toggleFavorite(product.id)}
-            className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full hover:scale-110 transition-transform"
-            aria-label={false ? 'Remove from favorites' : 'Add to favorites'}
-          >
-            <Heart
-              className={`w-5 h-5 ${
-                (false) 
-                  ? 'fill-red-500 stroke-red-500'
-                  : 'stroke-gray-700'
-              }`}
-            />
-          </button>
-
+        
           <Link href={`/product/${product.id}`}>
           <img 
             src={BASE_URL+product.images.find((i) => i.primaryImage)?.url} 
             alt={product.name}
             className={`${
               size == 'tees' ? "aspect-[4/4]" : "aspect-auto"
-            } w-full h-full object-cover group-hover:scale-105 transition-transform duration-300`}
+            } w-full h-full object-contain group-hover:scale-105 transition-transform duration-300`}
           />
           </Link>
         </div>

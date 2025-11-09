@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Heart, Plus } from "lucide-react"
+import { Plus } from "lucide-react"
 import Link from "next/link"
 
 interface Product {
@@ -22,7 +22,6 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, layout = "grid" }: ProductCardProps) {
-  const [isFavorite, setIsFavorite] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
 
   if (layout === "list") {
@@ -43,16 +42,6 @@ export default function ProductCard({ product, layout = "grid" }: ProductCardPro
           <div className="flex gap-2">
             <button className="flex-1 px-3 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition">
               Add to Cart
-            </button>
-            <button
-              onClick={() => setIsFavorite(!isFavorite)}
-              className="p-2 border border-border rounded-lg hover:bg-muted transition"
-            >
-              <Heart
-                className="w-4 h-4"
-                fill={isFavorite ? "currentColor" : "none"}
-                color={isFavorite ? "#ef4444" : "currentColor"}
-              />
             </button>
           </div>
         </div>
@@ -85,21 +74,6 @@ export default function ProductCard({ product, layout = "grid" }: ProductCardPro
           {/* Quick Add Button */}
           <button className="absolute bottom-3 right-3 p-2 bg-primary text-primary-foreground rounded-lg opacity-0 group-hover:opacity-100 transition">
             <Plus className="w-5 h-5" />
-          </button>
-
-          {/* Favorite Button */}
-          <button
-            onClick={(e) => {
-              e.preventDefault()
-              setIsFavorite(!isFavorite)
-            }}
-            className="absolute top-3 left-3 p-2 bg-white rounded-lg shadow-sm hover:shadow-md transition"
-          >
-            <Heart
-              className="w-5 h-5"
-              fill={isFavorite ? "currentColor" : "none"}
-              color={isFavorite ? "#ef4444" : "currentColor"}
-            />
           </button>
         </div>
 

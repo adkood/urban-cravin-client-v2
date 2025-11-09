@@ -8,11 +8,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function RelatedProducts({category,productId} : {category : string, productId : string}) {
   const [products, setProducts] = useState<any[]>([]);
-  const [isReady, setIsReady] = useState(false); // ← Only render when ready
+  const [isReady, setIsReady] = useState(false); 
   const [scrollPosition, setScrollPosition] = useState(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  // Fetch 3 Oversized Tees
   useEffect(() => {
     async function fetchRelated() {
       try {
@@ -47,12 +46,10 @@ export default function RelatedProducts({category,productId} : {category : strin
     setScrollPosition(newPos);
   };
 
-  // FULL-SECTION SKELETON (same height as final content)
   if (!isReady) {
     return (
       <section className="border-t border-border mt-12 py-12">
         <div className="container mx-auto px-4 max-w-[90%]">
-          {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-2xl lg:text-3xl font-bold mb-2">
@@ -68,7 +65,6 @@ export default function RelatedProducts({category,productId} : {category : strin
             </div>
           </div>
 
-          {/* Desktop Skeleton */}
           <div className="hidden md:flex gap-6">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="flex-shrink-0 w-96 space-y-4">
@@ -79,7 +75,6 @@ export default function RelatedProducts({category,productId} : {category : strin
             ))}
           </div>
 
-          {/* Mobile Skeleton */}
           <div className="md:hidden space-y-6">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="space-y-4">
@@ -94,11 +89,9 @@ export default function RelatedProducts({category,productId} : {category : strin
     );
   }
 
-  // REAL CONTENT — mounts ONCE when ready
   return (
     <section className="border-t border-border mt-12 py-12">
       <div className="container mx-auto px-4 max-w-[90%]">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl lg:text-3xl font-bold mb-2">
@@ -124,7 +117,6 @@ export default function RelatedProducts({category,productId} : {category : strin
           </div>
         </div>
 
-        {/* Desktop Carousel */}
         <div className="hidden md:block">
           <div
             ref={containerRef}
@@ -142,7 +134,6 @@ export default function RelatedProducts({category,productId} : {category : strin
           </div>
         </div>
 
-        {/* Mobile Grid */}
         <div className="md:hidden grid grid-cols-1 gap-6">
           {products.map((product) => (
             <ProductCard

@@ -32,56 +32,56 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {/* Main Image */}
-      <div className="relative bg-muted rounded-lg overflow-hidden aspect-square group">
+      <div className="relative rounded-lg overflow-hidden aspect-square group">
         <Image
           src={BASE_URL+selectedImage.url}
           alt={selectedImage.altText}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          className="object-contain group-hover:scale-105 transition-transform duration-300"
           priority={selectedImageIndex === 0}
         />
 
         {/* Zoom Button */}
         <button
           onClick={() => setIsZoomed(!isZoomed)}
-          className="absolute top-4 right-4 p-2 bg-white/90 hover:bg-white rounded-lg transition md:hidden"
+          className="absolute top-2 right-2 sm:top-4 sm:right-4 p-1.5 sm:p-2 bg-white/90 hover:bg-white rounded-lg transition md:opacity-0 md:group-hover:opacity-100"
         >
-          <Maximize2 className="w-5 h-5" />
+          <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
 
-        {/* Navigation Arrows */}
+        {/* Navigation Arrows - Always visible on mobile, hover on desktop */}
         <button
           onClick={handlePrevious}
-          className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/90 hover:bg-white rounded-lg transition opacity-0 group-hover:opacity-100"
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 bg-white/90 hover:bg-white rounded-lg transition md:opacity-0 md:group-hover:opacity-100"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
         <button
           onClick={handleNext}
-          className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/90 hover:bg-white rounded-lg transition opacity-0 group-hover:opacity-100"
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 bg-white/90 hover:bg-white rounded-lg transition md:opacity-0 md:group-hover:opacity-100"
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
 
         {/* Image Counter */}
-        <div className="absolute bottom-4 left-4 px-3 py-1 bg-black/50 text-white text-xs rounded-full">
+        <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 px-2 py-0.5 sm:px-3 sm:py-1 bg-black/50 text-white text-xs rounded-full">
           {selectedImageIndex + 1} / {images.length}
         </div>
       </div>
 
-      {/* Thumbnail Gallery */}
-      <div className="grid grid-cols-6 gap-2">
+      {/* Thumbnail Gallery - Responsive grid */}
+      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-1.5 sm:gap-2">
         {images.map((image, index) => (
           <button
             key={image.id}
             onClick={() => setSelectedImageIndex(index)}
-            className={`relative aspect-square rounded-lg overflow-hidden border-2 transition ${
+            className={`relative aspect-square rounded-md sm:rounded-lg overflow-hidden border-2 transition ${
               selectedImageIndex === index ? "border-primary" : "border-border hover:border-primary/50"
             }`}
           >
-            <Image src={BASE_URL+image.url || "/placeholder.svg"} alt={image.altText} fill className="object-cover" />
+            <Image src={BASE_URL+image.url || "/placeholder.svg"} alt={image.altText} fill className="object-contain" />
           </button>
         ))}
       </div>

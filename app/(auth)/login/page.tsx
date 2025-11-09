@@ -26,12 +26,15 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const Login = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
 
   const formik = useFormik<LoginFormValues>({
     initialValues: { usernameOrEmail: "", password: "" },
     validationSchema: toFormikValidationSchema(loginSchema),
     onSubmit: async (values) => {
       try {
+        setLoading(true);
         const resp = await axios.post<{
           status: string;
           message: string;
@@ -52,6 +55,9 @@ const Login = () => {
         } else {
           toast.error(error?.message || "Something went wrong");
         }
+      }
+      finally {
+        setLoading(false);
       }
     },
   });
@@ -144,9 +150,20 @@ const Login = () => {
           {/* Submit */}
           <button
             type="submit"
+            disabled={loading}
             className="w-full py-3 bg-[#9b1e22] text-white text-sm font-semibold rounded-lg hover:bg-[#7d171b] active:scale-[0.98] transition-all"
           >
-            Sign In
+            {loading ? 
+              (
+              <div className="flex items-center justify-center gap-2">
+                <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                Signing In...
+              </div>
+              ) : 
+              (
+                "Sign In"
+              )
+            }
           </button>
         </form>
 

@@ -2,7 +2,7 @@
 
 import { NAV_ITEMS as navItems } from "@/lib/constants";
 import { nunitoSans } from "@/lib/fonts";
-import { Search, User, Heart, ShoppingCart, Menu, X } from "lucide-react";
+import { Search, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import UserAvatar from "../cards/user-profile";
@@ -19,7 +19,29 @@ export default function Header() {
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Single ref for the entire search container (both desktop + mobile)
+  const searchContainerRef = useRef<HTMLDivElement | null>(null);
 
+  // Close everything when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        setShowResults(false);
+        setIsSearchOpen(false); // This closes mobile search too
+        // Optional: clear query if you want
+        // setSearchQuery("");
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Debounced search
   useEffect(() => {
     if (!searchQuery.trim()) {
       setResults([]);
@@ -43,16 +65,23 @@ export default function Header() {
       } finally {
         setIsLoading(false);
       }
-    }, 400); 
+    }, 400);
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, [searchQuery]);
 
+  // Close mobile search when clicking a result
+  const handleResultClick = () => {
+    setShowResults(false);
+    setIsSearchOpen(false);
+    setSearchQuery(""); // Optional: clear after selection
+  };
+
   return (
     <header className="w-full bg-white relative">
-      <CartInitializer/>
+      <CartInitializer />
       <div className="border-b border-gray-200">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-3 sm:gap-6">
@@ -69,23 +98,26 @@ export default function Header() {
 
             <Link href={"/"}>
               <div className="flex-shrink-0">
-                <h1 className={`${nunitoSans.className} text-[30px]`}>
+                <h1 className={`${nunitoSans.className} text-[20px] md:text-[30px]`}>
                   URBAN
                   <span className="text-[#9b1e22] mx-1">CRAVIN'</span>
                 </h1>
               </div>
             </Link>
 
-            <div className="hidden md:flex flex-1 max-w-[600px] relative">
+            {/* Desktop Search */}
+            <div ref={searchContainerRef} className="hidden md:flex flex-1 max-w-[600px] relative">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => searchQuery.trim() && setShowResults(true)}
                 placeholder="SEARCH FOR PRODUCTS"
                 className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-md text-sm font-medium tracking-wide placeholder:text-gray-500 placeholder:text-xs placeholder:font-semibold focus:outline-none focus:border-gray-400 disabled:opacity-50"
               />
               <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
 
+              {/* Desktop Results Dropdown */}
               {showResults && (
                 <div className="absolute top-full mt-2 left-0 w-full bg-white shadow-lg border border-gray-200 rounded-md max-h-80 overflow-y-auto z-50">
                   {isLoading ? (
@@ -96,28 +128,23 @@ export default function Header() {
                         href={`/product/${p.id}`}
                         key={p.id}
                         className="flex items-center gap-3 p-3 hover:bg-gray-100 transition-colors"
-                        onClick={() => setShowResults(false)}
+                        onClick={handleResultClick}
                       >
                         <img
                           src={
-                            BASE_URL + (p.images.find((img) => img.primaryImage)?.url ||
-                            p.images[0]?.url)
+                            BASE_URL + (p.images.find((img) => img.primaryImage)?.url || p.images[0]?.url)
                           }
                           alt={p.name}
                           className="w-12 h-12 object-cover rounded-md"
                         />
                         <div className="flex flex-col">
                           <span className="text-sm font-semibold">{p.name}</span>
-                          <span className="text-xs text-gray-500">
-                            ₹{p.price.toFixed(2)}
-                          </span>
+                          <span className="text-xs text-gray-500">₹{p.price.toFixed(2)}</span>
                         </div>
                       </Link>
                     ))
                   ) : (
-                    <p className="p-4 text-sm text-gray-500">
-                      No results found
-                    </p>
+                    <p className="p-4 text-sm text-gray-500">No results found</p>
                   )}
                 </div>
               )}
@@ -134,24 +161,25 @@ export default function Header() {
               <button className="hidden sm:block hover:opacity-70 transition-opacity">
                 <UserAvatar />
               </button>
-              <button className="hidden sm:block hover:opacity-70 transition-opacity">
-                <Heart className="w-5 h-5 sm:w-6 sm:h-6" />
-              </button>
-              <CartIcon/>
+              <CartIcon />
             </div>
           </div>
 
+          {/* Mobile Search */}
           {isSearchOpen && (
             <div className="md:hidden mt-3 relative">
               <input
                 type="text"
+                autoFocus
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => searchQuery.trim() && setShowResults(true)}
                 placeholder="SEARCH FOR PRODUCTS"
                 className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-md text-sm font-medium tracking-wide placeholder:text-gray-500 placeholder:text-xs placeholder:font-semibold focus:outline-none focus:border-gray-400 disabled:opacity-50"
               />
               <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
 
+              {/* Mobile Results Dropdown */}
               {showResults && (
                 <div className="absolute top-full mt-2 left-0 w-full bg-white shadow-lg border border-gray-200 rounded-md max-h-80 overflow-y-auto z-50">
                   {isLoading ? (
@@ -162,28 +190,23 @@ export default function Header() {
                         href={`/product/${p.id}`}
                         key={p.id}
                         className="flex items-center gap-3 p-3 hover:bg-gray-100 transition-colors"
-                        onClick={() => setShowResults(false)}
+                        onClick={handleResultClick}
                       >
                         <img
                           src={
-                            BASE_URL+(p.images.find((img) => img.primaryImage)?.url ||
-                            p.images[0]?.url)
+                            BASE_URL + (p.images.find((img) => img.primaryImage)?.url || p.images[0]?.url)
                           }
                           alt={p.name}
                           className="w-12 h-12 object-cover rounded-md"
                         />
                         <div className="flex flex-col">
                           <span className="text-sm font-semibold">{p.name}</span>
-                          <span className="text-xs text-gray-500">
-                            ₹{p.price.toFixed(2)}
-                          </span>
+                          <span className="text-xs text-gray-500">₹{p.price.toFixed(2)}</span>
                         </div>
                       </Link>
                     ))
                   ) : (
-                    <p className="p-4 text-sm text-gray-500">
-                      No results found
-                    </p>
+                    <p className="p-4 text-sm text-gray-500">No results found</p>
                   )}
                 </div>
               )}
@@ -202,15 +225,16 @@ export default function Header() {
             <ul className="space-y-3">
               {navItems.map((item, index) => (
                 <li key={index}>
-                  <Link href={item.HREF} className="flex items-center justify-between w-full text-left text-sm font-bold tracking-wide uppercase hover:opacity-70 transition-opacity py-2">
+                  <Link
+                    href={item.HREF}
+                    className="flex items-center justify-between w-full text-left text-sm font-bold tracking-wide uppercase hover:opacity-70 transition-opacity py-2"
+                  >
                     <span className="relative">
                       {item.label}
                       {item.badge && (
                         <span
                           className={`ml-2 ${
-                            item.badge === "HOT"
-                              ? "bg-[#9b1e22]"
-                              : "bg-[#9b1e22]"
+                            item.badge === "HOT" ? "bg-[#9b1e22]" : "bg-[#9b1e22]"
                           } text-white text-[7.5px] font-bold px-1.5 py-[0.2rem] rounded-full`}
                         >
                           {item.badge}
@@ -235,14 +259,15 @@ function Nav() {
         <ul className="flex gap-4 xl:gap-8 py-4 overflow-x-auto px-4">
           {navItems.map((item, index) => (
             <li key={index} className="relative flex-shrink-0">
-              <Link href={item.HREF} className="flex items-center gap-1 text-xs xl:text-sm font-bold tracking-wide uppercase hover:opacity-70 transition-opacity whitespace-nowrap">
+              <Link
+                href={item.HREF}
+                className="flex items-center gap-1 text-xs xl:text-sm font-bold tracking-wide uppercase hover:opacity-70 transition-opacity whitespace-nowrap"
+              >
                 {item.label}
                 {item.badge && (
                   <span
                     className={`absolute -top-[0.8rem] -right-4.5 ${
-                      item.badge === "HOT"
-                        ? "bg-[#9b1e22]"
-                        : "bg-[#9b1e22]"
+                      item.badge === "HOT" ? "bg-[#9b1e22]" : "bg-[#9b1e22]"
                     } text-white text-[7.5px] font-bold px-1.5 py-[0.2rem] rounded-full`}
                   >
                     {item.badge}
