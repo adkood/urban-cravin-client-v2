@@ -74,7 +74,7 @@ export default function CartClient({ initialData }: CartClientProps) {
     if (newQuantity > item.quantity) {
       const res = await addToCart({
         productId: item.product.id,
-        size: "M",
+        size: item.size,
         qty: 1,
       })
       if (res.success) {

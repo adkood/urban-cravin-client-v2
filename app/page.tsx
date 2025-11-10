@@ -76,11 +76,18 @@ export default function Home() {
       <Marquee marqueItems={TOP_HEADER_MARQUEE_ITEMS} />
       <Header />
       <HeroSection />
+      <ProductCarousel
+        title="Best Sellers"
+        products={pants}
+        isLoading={false}
+        size="pants"
+        layout="grid"
+      />
       <TrendingCollections />
 
       {/* OVERSIZED TEES */}
       <ProductCarousel
-        title="Hot Right Now"
+        title="Oversized Tees"
         products={tees}
         isLoading={false}
         size="tees"
@@ -90,7 +97,7 @@ export default function Home() {
 
       {/* SWEAT PANTS */}
       <ProductCarousel
-        title="Chill Fits"
+        title="SWEATPANTS"
         products={pants}
         isLoading={false}
         size="pants"

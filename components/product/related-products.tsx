@@ -6,9 +6,9 @@ import ProductCard from "@/components/cards/product-card";
 import { filterProductsAction, FilterProductsData } from "@/data/product";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function RelatedProducts({category,productId} : {category : string, productId : string}) {
+export default function RelatedProducts({ category, productId }: { category: string, productId: string }) {
   const [products, setProducts] = useState<any[]>([]);
-  const [isReady, setIsReady] = useState(false); 
+  const [isReady, setIsReady] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -75,12 +75,13 @@ export default function RelatedProducts({category,productId} : {category : strin
             ))}
           </div>
 
-          <div className="md:hidden space-y-6">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="space-y-4">
-                <Skeleton className="h-80 w-full rounded-2xl" />
-                <Skeleton className="h-6 w-3/4" />
-                <Skeleton className="h-5 w-1/2" />
+          {/* Mobile Loading Skeleton (2-column grid) */}
+          <div className="md:hidden grid grid-cols-2 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="space-y-3">
+                <Skeleton className="h-48 w-full rounded-2xl" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
               </div>
             ))}
           </div>
@@ -117,6 +118,7 @@ export default function RelatedProducts({category,productId} : {category : strin
           </div>
         </div>
 
+        {/* Desktop scrollable carousel */}
         <div className="hidden md:block">
           <div
             ref={containerRef}
@@ -134,15 +136,17 @@ export default function RelatedProducts({category,productId} : {category : strin
           </div>
         </div>
 
-        <div className="md:hidden grid grid-cols-1 gap-6">
+        {/* ✅ Mobile: 2-column grid */}
+        <div className="md:hidden grid grid-cols-2 gap-4">
           {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              size="tees"
-              isfull={true}
-              animate={false}
-            />
+            <div key={product.id} className="w-full">
+              <ProductCard
+                product={product}
+                size="tees"
+                isfull={false}
+                animate={false}
+              />
+            </div>
           ))}
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import ProductGallery from "@/components/product/product-gallery";
 import SizeChart from "@/components/product/size-chart";
@@ -21,6 +21,54 @@ export default function ProductClient({ product }: { product: Product }) {
   const [showSizeChart, setShowSizeChart] = useState(false);
   const [isPending, startTransition] = useTransition();
   const setCart = useCartStore((state) => state.setCart);
+  const [timeRemaining, setTimeRemaining] = useState({ hours: 3, minutes: 45, seconds: 41 });
+
+  // Calculate dates dynamically
+  const today = new Date();
+  const orderConfirmedDate = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  
+  const dispatchStart = new Date(today);
+  dispatchStart.setDate(dispatchStart.getDate() + 1);
+  const dispatchStartDate = dispatchStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  
+  const dispatchEnd = new Date(today);
+  dispatchEnd.setDate(dispatchEnd.getDate() + 3);
+  const dispatchEndDate = dispatchEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  
+  const deliveryStart = new Date(today);
+  deliveryStart.setDate(deliveryStart.getDate() + 7);
+  const deliveryStartDate = deliveryStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  
+  const deliveryEnd = new Date(today);
+  deliveryEnd.setDate(deliveryEnd.getDate() + 11);
+  const deliveryEndDate = deliveryEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeRemaining((prev) => {
+        let { hours, minutes, seconds } = prev;
+        
+        if (seconds > 0) {
+          seconds--;
+        } else if (minutes > 0) {
+          minutes--;
+          seconds = 59;
+        } else if (hours > 0) {
+          hours--;
+          minutes = 59;
+          seconds = 59;
+        } else {
+          clearInterval(timer);
+          return { hours: 0, minutes: 0, seconds: 0 };
+        }
+        
+        return { hours, minutes, seconds };
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   const discountedPrice =
     product.discountPercentage
       ? product.price - (product.price * (product.discountPercentage / 100))
@@ -159,6 +207,28 @@ export default function ProductClient({ product }: { product: Product }) {
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
+          </div>
+
+          {/* Shipping Timeline */}
+          <div className="border border-border rounded-lg p-4 space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Truck className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">
+                  Order within
+                </span>
+              </div>
+              <div className="flex items-center gap-0.5 font-mono text-sm font-semibold">
+                <span>{String(timeRemaining.hours).padStart(2, '0')}</span>
+                <span>:</span>
+                <span>{String(timeRemaining.minutes).padStart(2, '0')}</span>
+                <span>:</span>
+                <span>{String(timeRemaining.seconds).padStart(2, '0')}</span>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Delivery: <span className="text-foreground font-medium">{deliveryStartDate} - {deliveryEndDate}</span>
+            </p>
           </div>
 
           {/* Add to Cart */}

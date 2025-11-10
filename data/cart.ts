@@ -23,6 +23,7 @@ export interface ApiCartItem {
   unitPrice: number
   itemTotalPrice: number
   product: ApiProduct
+  size : string
 }
 
 export interface ApiCart {

@@ -2,23 +2,44 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
-  console.log("Middleware called")
+  const authCookie = req.cookies.get("Authorization")?.value;
 
-  const token = req.cookies.get("Authorization")?.value;
+  const token = authCookie?.startsWith("Bearer ")
+    ? authCookie.split(" ")[1]
+    : null;
 
   const protectedRoutes = ["/cart", "/account", "/checkout"];
-
   const pathname = req.nextUrl.pathname;
-
-  console.log(pathname)
 
   const isProtected = protectedRoutes.some((route) =>
     pathname.startsWith(route)
   );
 
-  if (isProtected && !token) {
-    const loginUrl = new URL("/login", req.url);
-    return NextResponse.redirect(loginUrl);
+  if (isProtected) {
+    if (!token) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+
+    try {
+      const parts = token.split(".");
+      if (parts.length !== 3) throw new Error("Invalid JWT format");
+
+      const payloadBase64 = parts[1];
+
+      const jsonPayload = JSON.parse(
+        Buffer.from(payloadBase64, "base64").toString("utf8")
+      );
+
+      const isExpired = jsonPayload.exp * 1000 < Date.now();
+
+      if (isExpired) {
+        return NextResponse.redirect(new URL("/login?expired=1", req.url));
+      }
+
+    } catch (err) {
+      console.error("JWT decode failed:", err);
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
   }
 
   return NextResponse.next();
@@ -26,13 +47,8 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/cart",
     "/cart/:path*",
-    "/account",
     "/account/:path*",
-    "/checkout",
     "/checkout/:path*",
   ],
 };
-
-
