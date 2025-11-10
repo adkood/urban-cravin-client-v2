@@ -14,6 +14,7 @@ import { TOP_HEADER_MARQUEE_ITEMS } from "@/lib/constants";
 import { filterProductsAction, FilterProductsData } from "@/data/product";
 import { Skeleton } from "@/components/ui/skeleton";
 import { nunitoSans } from "@/lib/fonts";
+import FAQ from "@/components/faq";
 
 export default function Home() {
   const [tees, setTees] = useState<any[]>([]);
@@ -105,6 +106,7 @@ export default function Home() {
 
       <FeaturedProductsCarousel />
       <Testimonials />
+      <FAQ/>
       <Footer />
     </main>
   );
