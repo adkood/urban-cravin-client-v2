@@ -21,7 +21,7 @@ export default function ProductClient({ product }: { product: Product }) {
   const [showSizeChart, setShowSizeChart] = useState(false);
   const [isPending, startTransition] = useTransition();
   const setCart = useCartStore((state) => state.setCart);
-  const [timeRemaining, setTimeRemaining] = useState({ hours: 3, minutes: 45, seconds: 41 });
+  const [timeRemaining, setTimeRemaining] = useState({ hours: 0, minutes: 0, seconds: 0 });
 
   // Calculate dates dynamically
   const today = new Date();
@@ -43,31 +43,30 @@ export default function ProductClient({ product }: { product: Product }) {
   deliveryEnd.setDate(deliveryEnd.getDate() + 11);
   const deliveryEndDate = deliveryEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeRemaining((prev) => {
-        let { hours, minutes, seconds } = prev;
-        
-        if (seconds > 0) {
-          seconds--;
-        } else if (minutes > 0) {
-          minutes--;
-          seconds = 59;
-        } else if (hours > 0) {
-          hours--;
-          minutes = 59;
-          seconds = 59;
-        } else {
-          clearInterval(timer);
-          return { hours: 0, minutes: 0, seconds: 0 };
-        }
-        
-        return { hours, minutes, seconds };
-      });
-    }, 1000);
+useEffect(() => {
+  function updateTimeRemaining() {
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(23, 59, 59, 999); // end of the current day
 
-    return () => clearInterval(timer);
-  }, []);
+    const diff = midnight.getTime() - now.getTime();
+
+    if (diff <= 0) {
+      setTimeRemaining({ hours: 0, minutes: 0, seconds: 0 });
+      return;
+    }
+
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    setTimeRemaining({ hours, minutes, seconds });
+  }
+
+  updateTimeRemaining();
+  const timer = setInterval(updateTimeRemaining, 1000);
+  return () => clearInterval(timer);
+}, []);
 
   const discountedPrice =
     product.discountPercentage

@@ -22,10 +22,33 @@ export interface ApiOrder {
   totalPrice: number
   createdAt: string
   updatedAt: string
+  shippingAddress: {
+    id: string
+    fullName: string | null
+    street: string
+    city: string
+    state: string
+    postalCode: string
+    country: string
+    defaultAddress: boolean
+  }
   items: ApiOrderItem[]
 }
 
-export async function getUserOrders(): Promise<ActionResponse<ApiOrder[]>> {
+export interface ApiOrdersResponse {
+  orders: ApiOrder[]
+  currentPage: number
+  pageSize: number
+  totalElements: number
+  totalPages: number
+  first: boolean
+  last: boolean
+}
+
+export async function getUserOrders(
+  page = 0,
+  size = 5
+): Promise<ActionResponse<ApiOrdersResponse>> {
   try {
     const token = await getAuthToken()
 
@@ -39,40 +62,38 @@ export async function getUserOrders(): Promise<ActionResponse<ApiOrder[]>> {
     const config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: GET_ORDERS_URL,
+      url: `${GET_ORDERS_URL}?page=${page}&size=${size}`,
       headers: {
         Authorization: token,
       },
     }
 
-    const response = (
-      await axios.request<{
-        status: string
-        message: string
-        data?: ApiOrder[]
-      }>(config)
-    ).data
+    const response = await axios.request<{
+      status: string
+      message: string
+      data?: ApiOrdersResponse
+    }>(config)
 
-    // Handle failed status or missing data
-    if (response.status?.toLowerCase() !== "success" || !response.data) {
+    const { status, message, data } = response.data
+
+    if (status?.toLowerCase() !== "success" || !data) {
       return {
         success: false,
-        error: response.message || "Failed to fetch orders",
+        error: message || "Failed to fetch orders",
       }
     }
 
     return {
       success: true,
-      data: response.data,
+      data,
     }
   } catch (error: any) {
-    // Handle explicit 400 (no orders found)
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400) {
-        return {
-          success: false,
-          error: "No orders found for this user",
-        }
+        return { success: false, error: "No orders found for this user" }
+      }
+      if (error.response?.status === 403) {
+        return { success: false, error: "You need to login to view your orders" }
       }
     }
 

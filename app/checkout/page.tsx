@@ -17,6 +17,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import {  Plus, ShoppingBag } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import {
   addUserAddress,
@@ -49,6 +50,7 @@ export default function CheckoutPage() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [discount, setDiscount] = useState(0);  
+  const router = useRouter();
   const { data, error : userError, isLoading : userLoading } = useSWR<UserDetails>(GET_USER_DETAILSURL, fetcher(),{
     revalidateOnFocus: false,
     shouldRetryOnError: false, 
@@ -136,7 +138,7 @@ export default function CheckoutPage() {
       if (values.paymentMethod === "cod") {
         const res = await checkoutCOD(selectedAddr.id,values.discountCode);
         if (res.success) {
-          window.location.href = `/checkout/success?orderId=${res.data.order.id}&method=cod`;
+          router.replace("/")
         } else {
           toast.error("COD order failed");
         }
@@ -150,7 +152,8 @@ export default function CheckoutPage() {
 
         const pay = res.data as CheckoutDataOnline;
 
-        await handleRazorpay({
+        await handleRazorpay(
+          {
           amount : pay.payment?.amount,
           razorpay_order_id : pay.payment.orderId,
           sessionId : user?.username as string,
@@ -161,7 +164,7 @@ export default function CheckoutPage() {
               name : user?.username as string,
               email : user?.email as string
           }
-        });
+        },router);
       } 
     } catch (err) {
       toast.error("Unexpected error");
@@ -444,14 +447,14 @@ function CheckOutHeader() {
     <header className="w-full bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:px-6">
 
-        <div className="flex-shrink-0 text-center">
+        <Link href={"/"} className="flex-shrink-0 text-center">
           <h1
             className={`${nunitoSans.className} text-2xl md:text-[30px] font-bold tracking-wide`}
           >
             URBAN
             <span className="text-[#9b1e22] mx-1">CRAVIN'</span>
           </h1>
-        </div>
+        </Link>
 
         <div className="flex items-center gap-4">
           <Link

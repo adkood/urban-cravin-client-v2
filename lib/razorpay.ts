@@ -2,6 +2,7 @@
 import axios from "axios";
 import {  RETURNURLAFTERPAYMENT, VERIFY_PAYMENT_URL } from "./urls";
 import { getAuthToken } from "@/data/cart";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 declare global {
   interface Window {
@@ -54,7 +55,7 @@ export const handleRazorpay = async ({
     name: string;
     email: string;
   };
-}) => {
+},router : AppRouterInstance) => {
   const res = await loadRazorpayScript();
   if (!res) {
     alert("Failed to load Razorpay SDK");
@@ -91,10 +92,10 @@ export const handleRazorpay = async ({
         );
 
         console.log("✅ Payment verified:", verifyResponse.data);
-        window.location.href = `${RETURNURLAFTERPAYMENT}?order_id=${receipt}&payment_id=${response.razorpay_payment_id}&sessionId=${sessionId}`;
+        router.replace(`${RETURNURLAFTERPAYMENT}?order_id=${receipt}&payment_id=${response.razorpay_payment_id}&sessionId=${sessionId}`);
       } catch (error) {
         console.error("❌ Payment verification failed:", error);
-        window.location.href = `${RETURNURLAFTERPAYMENT}?order_id=${receipt}&payment_id=${response.razorpay_payment_id}&sessionId=${sessionId}`;
+        router.replace(`${RETURNURLAFTERPAYMENT}?order_id=${receipt}&payment_id=${response.razorpay_payment_id}&sessionId=${sessionId}`);
         alert("Payment verification failed. Please contact support.");
       }
     },
