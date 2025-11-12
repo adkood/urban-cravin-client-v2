@@ -41,7 +41,7 @@ export async function addUserAddress(
     if (!token) {
       return {
         success: false,
-        error: "Unauthorized - No token found",
+        error: "Unauthorized - Login to proceed",
       }
     }
 
@@ -92,7 +92,7 @@ export async function getUserAddresses(): Promise<ActionResponse<ApiAddress[]>> 
     if (!token) {
       return {
         success: false,
-        error: "Unauthorized - No token found",
+        error: "Unauthorized - Login to proceed",
       }
     }
 
@@ -143,7 +143,7 @@ export async function deleteUserAddress(
     if (!token) {
       return {
         success: false,
-        error: "Unauthorized - No token found",
+        error: "Unauthorized - Login to proceed",
       }
     }
 
@@ -201,7 +201,7 @@ export async function updateUserAddress(
     if (!token) {
       return {
         success: false,
-        error: "Unauthorized - No token found",
+        error: "Unauthorized - Login to proceed",
       }
     }
 
@@ -370,4 +370,69 @@ export async function logout() {
 
   // Redirect to login page
   redirect('/login');
+}
+
+interface ApiUserDetailsResponse {
+  user: {
+    username: string
+    email: string
+    role: string
+  }
+}
+
+export async function getUserDetails(): Promise<ActionResponse<ApiUserDetailsResponse>> {
+  try {
+    const token = await getAuthToken()
+
+    if (!token) {
+      return {
+        success: false,
+        error: "Unauthorized - Login to proceed",
+      }
+    }
+
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `http://3.110.127.251:8080/api/users/details`,
+      headers: {
+        Authorization: token,
+      },
+    }
+
+
+    
+
+    const response = await axios.request<{
+      status: string
+      message: string
+      data?: ApiUserDetailsResponse
+    }>(config)
+
+    const { status, message, data } = response.data
+
+    if (status?.toLowerCase() !== "success" || !data) {
+      return {
+        success: false,
+        error: message || "Failed to fetch user details",
+      }
+    }
+
+    return {
+      success: true,
+      data,
+    }
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 403) {
+        return { success: false, error: "You need to login to access details" }
+      }
+    }
+
+    console.error("Error fetching user details:", error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error occurred",
+    }
+  }
 }

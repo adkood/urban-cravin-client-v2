@@ -24,6 +24,19 @@ import useSWR from "swr"
 import { fetcher } from "@/lib/utils"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { redirect } from "next/navigation"
+import { deleteReviewAdmin } from "@/data/admin"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { toast } from "sonner"
 
 export default function ProductReviews({ productId }: { productId: string }) {
   const [reviews, setReviews] = useState<Review[]>([])
@@ -39,6 +52,8 @@ export default function ProductReviews({ productId }: { productId: string }) {
     shouldRetryOnError: false, 
   });
   const user = data?.user;
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+const [reviewToDelete, setReviewToDelete] = useState<string | null>(null);
 
 
   useEffect(() => {
@@ -94,40 +109,78 @@ export default function ProductReviews({ productId }: { productId: string }) {
     })
   }
 
-  const handleDeleteReview = (reviewId: string) => {
-    startTransition(async () => {
-      const res = await deleteProductReview(reviewId)
-      if (res.success) {
-        setReviews((prev) => prev.filter((r) => r.id !== reviewId))
-      } else {
+const handleDeleteReview = (reviewId: string) => {
+  startTransition(async () => {
+    let res;
 
-        if(res.error.includes("401")) {
-          redirect("/login")
-        }
-        console.error("Failed to delete review:", res.error)
+    if (user?.role === "ROLE_ADMIN") {
+      res = await deleteReviewAdmin(reviewId);
+    } else {
+      res = await deleteProductReview(reviewId);
+    }
 
+    if (res.success) {
+      setReviews((prev) => prev.filter((r) => r.id !== reviewId));
+    } else {
+      if (res.error?.includes("401")) {
+        redirect("/login");
       }
-    })
+      console.error("Failed to delete review:", res.error);
+    }
+  });
+};
+
+
+const handleSubmitReview = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  // 🔸 Validate input before submitting
+  if (!formData.rating) {
+    toast.error("Please select a rating before submitting.");
+    return;
   }
 
-  const handleSubmitReview = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!formData.rating || !formData.comment) return
-    startTransition(async () => {
+  if (!formData.comment.trim()) {
+    toast.error("Please write a review before submitting.");
+    return;
+  }
+
+  startTransition(async () => {
+    try {
       const res = await addProductReview({
         productId,
         rating: formData.rating,
-        comment: formData.comment,
-      })
+        comment: formData.comment.trim(),
+      });
+
       if (res.success) {
-        setReviews((prev) => [res.data.review,...prev])
-        setFormData({ rating: 0, comment: "" })
-        setShowReviewForm(false)
+        setReviews((prev) => [res.data.review, ...prev]);
+        setFormData({ rating: 0, comment: "" });
+        setShowReviewForm(false);
+        toast.success("Your review has been submitted!");
       } else {
-        console.error("Error submitting review:", res.error)
+        // 🔸 Handle specific errors
+        if (res.error?.includes("401")) {
+          toast.error("Please login to submit a review.");
+          redirect("/login");
+          return;
+        }
+
+        if (res.error?.includes("already reviewed")) {
+          toast.error("You have already submitted a review for this product.");
+          return;
+        }
+
+        toast.error(res.error || "Failed to submit review. Please try again later.");
+        console.error("Submit review error:", res.error);
       }
-    })
-  }
+    } catch (err) {
+      console.error("Unexpected error while submitting review:", err);
+      toast.error("Something went wrong. Please try again later.");
+    }
+  });
+};
+
 
   const averageRating =
     reviews.length > 0
@@ -258,15 +311,45 @@ export default function ProductReviews({ productId }: { productId: string }) {
                 </button>
 
                 {
-                  !userLoading && !userError && review.userName == user?.username && 
-                  <button
-                    disabled={isPending}
-                    onClick={() => handleDeleteReview(review.id)}
-                    className="text-muted-foreground hover:text-red-500 transition flex items-center gap-1 text-xs sm:text-sm"
-                  >
-                    <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline">Delete</span>
-                  </button>
+                  !userLoading && !userError && (review.userName === user?.username || user?.role === "ROLE_ADMIN") && 
+<AlertDialog open={deleteDialogOpen && reviewToDelete === review.id} onOpenChange={setDeleteDialogOpen}>
+  <AlertDialogTrigger asChild>
+    <button
+      disabled={isPending}
+      onClick={() => {
+        setReviewToDelete(review.id);
+        setDeleteDialogOpen(true);
+      }}
+      className="text-muted-foreground hover:text-red-500 transition flex items-center gap-1 text-xs sm:text-sm"
+    >
+      <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
+      <span className="hidden sm:inline">Delete</span>
+    </button>
+  </AlertDialogTrigger>
+
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Delete Review?</AlertDialogTitle>
+      <AlertDialogDescription>
+        Are you sure you want to delete this review? This action cannot be undone.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancel</AlertDialogCancel>
+      <AlertDialogAction
+        onClick={() => {
+          if (reviewToDelete) handleDeleteReview(reviewToDelete);
+          setDeleteDialogOpen(false);
+          setReviewToDelete(null);
+        }}
+        className="bg-red-600 hover:bg-red-700 text-white"
+      >
+        Delete
+      </AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
+
                 }
               </div>
             </div>

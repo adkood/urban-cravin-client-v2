@@ -45,7 +45,7 @@ const Signup = () => {
         });
         if(resp.data.status.toLocaleLowerCase() == "success") {
           toast.success(resp.data.message);
-          setTimeout(() => router.push("/login"),2000)
+          router.push("/login")
         }
         else if (resp.data.status.toLocaleLowerCase() == "error"){
           toast.error("Invalid Inputs!!");

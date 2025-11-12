@@ -40,7 +40,7 @@ export async function addReview({
     const token = await getAuthToken()
 
     if (!token) {
-      return { success: false, error: "Unauthorized - No token found" }
+      return { success: false, error: "Unauthorized - Login to proceed" }
     }
 
     const config = {

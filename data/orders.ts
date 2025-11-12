@@ -55,7 +55,7 @@ export async function getUserOrders(
     if (!token) {
       return {
         success: false,
-        error: "Unauthorized - No token found",
+        error: "Unauthorized - Login to proceed",
       }
     }
 

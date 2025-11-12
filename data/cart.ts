@@ -62,7 +62,7 @@ export async function getCart(): Promise<ActionResponse<GetCartResponse>> {
     if (!token) {
       return {
         success: false,
-        error: "Unauthorized - No token found",
+        error: "Unauthorized - Login to proceed",
       }
     }
 
@@ -119,7 +119,7 @@ export async function removeFromCart(
     if (!token) {
       return {
         success: false,
-        error: "Unauthorized - No token found",
+        error: "Unauthorized - Login to proceed",
       }
     }
 
@@ -181,7 +181,7 @@ export async function addToCart(
     if (!token) {
       return {
         success: false,
-        error: "Unauthorized - No token found",
+        error: "Unauthorized - Login to proceed",
       }
     }
 

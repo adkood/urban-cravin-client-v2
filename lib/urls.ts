@@ -17,3 +17,4 @@ export const DELETE_ADDRESS_URL = (addressId : string) => `${BASE_URL}/api/users
 export const UPDATE_ADDRESS_URL = (addressId : string) => `${BASE_URL}/api/users/addresses/${addressId}`
 export const GET_ORDERS_URL = `${BASE_URL}/api/orders/my-orders`
 export const ADD_REVIEW_URL = `${BASE_URL}/api/reviews`
+export const GET_ORDERS_URL_ADMIN = `${BASE_URL}/api/orders/admin`

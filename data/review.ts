@@ -75,7 +75,7 @@ export async function addProductReview(
     const token = await getAuthToken()
 
     if (!token) {
-      return { success: false, error: "Unauthorized - No token found" }
+      return { success: false, error: "Unauthorized - Login to proceed" }
     }
 
     const response = await axios.post<{
@@ -155,7 +155,7 @@ export async function deleteProductReview(
   try {
     const token = await getAuthToken()
     if (!token) {
-      return { success: false, error: "Unauthorized - No token found" }
+      return { success: false, error: "Unauthorized - Login to proceed" }
     }
 
     const response = await axios.delete<{
@@ -193,7 +193,7 @@ export async function toggleReviewLike(
   try {
     const token = await getAuthToken()
     if (!token) {
-      return { success: false, error: "Unauthorized - No token found" }
+      return { success: false, error: "Unauthorized - Login to proceed" }
     }
 
     const response = await axios.post<ToggleLikeResponse>(
