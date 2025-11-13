@@ -201,7 +201,7 @@ export async function getProductById(productId: string): Promise<{
 }> {
   try {
     const res = await axios.get<ProductResponse>(
-      `http://3.110.127.251:8080/categories/products/${productId}`,
+      `${BASE_URL}/categories/products/${productId}`,
       { headers: { "Content-Type": "application/json" } }
     );
 

@@ -17,8 +17,10 @@ interface ProductGalleryProps {
 }
 
 export default function ProductGallery({ images, productName }: ProductGalleryProps) {
+
+  console.log(images)
   images = [...images.filter(v => v.tag !== "bg")].sort((a, b) => (b.primaryImage ? 1 : 0) - (a.primaryImage ? 1 : 0));
-  const [selectedImageIndex, setSelectedImageIndex] = useState(images.findIndex((i) => i.primaryImage))
+  const [selectedImageIndex, setSelectedImageIndex] = useState(images.findIndex((i) => i.primaryImage || i.tag === "front"))
   const [isZoomed, setIsZoomed] = useState(false)
 
   const selectedImage = images[selectedImageIndex]
@@ -31,13 +33,16 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
     setSelectedImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
   }
 
+  console.log(selectedImage)
+
+
   return (
     <div className="space-y-3 sm:space-y-4">
       {/* Main Image */}
       <div className="relative rounded-lg overflow-hidden aspect-square group">
         <Image
-          src={BASE_URL+selectedImage.url}
-          alt={selectedImage.altText}
+          src={BASE_URL+selectedImage?.url}
+          alt={selectedImage?.altText}
           fill
           className="object-contain group-hover:scale-105 transition-transform duration-300"
           priority={selectedImageIndex === 0}

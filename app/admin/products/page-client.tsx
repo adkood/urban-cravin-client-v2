@@ -882,6 +882,7 @@ function AddImageDialog({
   const [activeSection, setActiveSection] = useState<"image" | "tags">("image")
   const [deletingImageId, setDeletingImageId] = useState<string | null>(null)
   const previousProductIdRef = useRef<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const form = useForm<ImageFormValues>({
     resolver: imageFormResolver,
@@ -901,6 +902,9 @@ function AddImageDialog({
       setActiveSection("image")
       setDeletingImageId(null)
       setIsClearingTags(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
       previousProductIdRef.current = null
       return
     }
@@ -915,6 +919,9 @@ function AddImageDialog({
     setSelectedFile(null)
     setDeletingImageId(null)
     setIsClearingTags(false)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
 
     if (previousProductIdRef.current !== product.id) {
       setActiveSection("image")
@@ -961,6 +968,9 @@ function AddImageDialog({
       onUploaded(updatedProduct)
       form.reset({ ...imageFormDefaultValues })
       setSelectedFile(null)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
     } catch (err) {
       console.error("Failed to upload image:", err)
       toast.error("Failed to upload image")
@@ -1305,6 +1315,7 @@ function AddImageDialog({
                     <Input
                       type="file"
                       accept="image/*"
+                      ref={fileInputRef}
                       onChange={(event) => {
                         const file = event.target.files?.[0]
                         setSelectedFile(file ?? null)

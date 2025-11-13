@@ -194,41 +194,16 @@ const Footer = () => {
             {/* Social Media Icons */}
             <div className="flex items-center gap-4 bg-[#ffe6d2]/20 px-6 h-12 rounded-full">
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/urbancravin/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:opacity-80 transition"
               >
                 <Instagram className="w-6 h-6" />
               </a>
+
               <a
-                href="https://tiktok.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:opacity-80 transition"
-              >
-                <div className="w-6 h-6 flex items-center justify-center font-bold">
-                  T
-                </div>
-              </a>
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:opacity-80 transition"
-              >
-                <Facebook className="w-6 h-6" />
-              </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:opacity-80 transition"
-              >
-                <Youtube className="w-6 h-6" />
-              </a>
-              <a
-                href="https://twitter.com"
+                href="https://x.com/UrbanCravin/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:opacity-80 transition"
