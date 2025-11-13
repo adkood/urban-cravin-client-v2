@@ -25,7 +25,7 @@ const TrendingCollections = ({ categories }: TrendingCollectionsProps) => {
           title: category.name,
           buttonText: "SHOP HERE",
           image: imageUrl,
-          link: `/collection?category=${category.name}`,
+          link: `/collection?category=${encodeURIComponent(category.name)}`,
           description: category.description,
           alt: category.name,
         };
@@ -77,16 +77,19 @@ const TrendingCollections = ({ categories }: TrendingCollectionsProps) => {
                             <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300">
                               <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white">
                                 {/* Category */}
-                             
-                                
+                               
+
                                 {/* Title */}
                                 <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 md:mb-6">
                                   {collection.title}
                                 </h3>
-                             
-                                
+                    
+
                                 {/* Button */}
-                                <Link href={collection.link} className="bg-white text-black text-xs md:text-sm font-semibold tracking-wide px-6 py-2.5 md:px-8 md:py-3 hover:bg-gray-100 transition-colors duration-200">
+                                <Link
+                                  href={collection.link}
+                                  className="bg-white text-black text-xs md:text-sm font-semibold tracking-wide px-6 py-2.5 md:px-8 md:py-3 hover:bg-gray-100 transition-colors duration-200"
+                                >
                                   {collection.buttonText}
                                 </Link>
                               </div>

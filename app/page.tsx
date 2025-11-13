@@ -14,13 +14,13 @@ import {
   type Product,
 } from "@/data/product";
 import { getCategoriesAdmin, type AdminCategory } from "@/data/admin";
-import { nunitoSans } from "@/lib/fonts";
 import FAQ from "@/components/faq";
 
 export default async function Home() {
   let categories: AdminCategory[] = [];
   let tees: Product[] = [];
   let pants: Product[] = [];
+  let bestSellers: Product[] = [];
 
   try {
     const categoriesResponse = await getCategoriesAdmin();
@@ -41,21 +41,27 @@ export default async function Home() {
       categories.find((category) => category.name === "SWEATPANTS")?.name ??
       "SWEATPANTS";
 
-    const [teesRes, pantsRes] = await Promise.all([
+    const [teesRes, pantsRes, bestSellerRes] = await Promise.all([
       filterProductsAction({
         categoryName: oversizedName,
         page: 0,
-        size: 8,
+        size: 12,
       }) as Promise<FilterProductsData>,
       filterProductsAction({
         categoryName: sweatpantsName,
         page: 0,
-        size: 8,
+        size: 12,
+      }) as Promise<FilterProductsData>,
+      filterProductsAction({
+        tags: "best-seller",
+        page: 0,
+        size: 12,
       }) as Promise<FilterProductsData>,
     ]);
 
-    tees = teesRes.products ?? [];
-    pants = pantsRes.products ?? [];
+    tees = (teesRes.products ?? []).slice(0, 12);
+    pants = (pantsRes.products ?? []).slice(0, 12);
+    bestSellers = (bestSellerRes.products ?? []).slice(0, 12);
   } catch (error) {
     console.error("Error loading home page data:", error);
   }
@@ -67,9 +73,9 @@ export default async function Home() {
       <HeroSection />
       <ProductCarousel
         title="Best Sellers"
-        products={pants}
+        products={bestSellers}
         isLoading={false}
-        size="pants"
+        size="tees"
         layout="grid"
       />
       <TrendingCollections categories={categories} />

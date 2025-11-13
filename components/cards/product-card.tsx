@@ -50,7 +50,7 @@ const ProductCard = ({
       <div className="group relative bg-white rounded-lg overflow-hidden mb-4">
         <Link href={`/product/${product.id}`}>
           <img
-            src={BASE_URL + product.images.find((i) => i.primaryImage)?.url}
+            src={BASE_URL + product.images.find((i) => i.primaryImage || i.tag === "front")?.url}
             alt={product.name}
             className={`${
               size == "tees" ? "aspect-[4/4]" : "aspect-auto"

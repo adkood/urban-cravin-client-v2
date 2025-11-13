@@ -1,5 +1,5 @@
-import ProductPage from "../client-page";
+import { redirect } from "next/navigation";
 
-export default function CollectionPage() {
-  return <ProductPage categoryName={"SWEATPANTS"} />;
+export default function CollectionCategoryRedirect() {
+  redirect("/collection?category=SWEATPANTS");
 }

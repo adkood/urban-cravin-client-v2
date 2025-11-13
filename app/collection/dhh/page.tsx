@@ -1,5 +1,5 @@
-import ProductPage from "../client-page";
+import { redirect } from "next/navigation";
 
-export default function CollectionPage() {
-  return <ProductPage tagName={"dhh"} />;
+export default function CollectionTagRedirect() {
+  redirect("/collection?tag=dhh");
 }

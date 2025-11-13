@@ -29,7 +29,7 @@ import { checkoutCOD, checkoutOnline, CheckoutDataOnline } from "@/data/checkout
 import { handleRazorpay } from "@/lib/razorpay";
 import { UserDetails } from "@/components/cards/user-profile";
 import useSWR from "swr";
-import { BASE_URL, GET_USER_DETAILSURL } from "@/lib/urls";
+import { BASE_URL, GET_USER_DETAILSURL, PAYMENT_FAILURE_PATH, PAYMENT_SUCCESS_PATH } from "@/lib/urls";
 import { fetcher } from "@/lib/utils";
 import AddressFormDialog from "@/components/address-form-dialog"; 
 import { toast } from "sonner";
@@ -137,16 +137,20 @@ export default function CheckoutPage() {
     try {
       if (values.paymentMethod === "cod") {
         const res = await checkoutCOD(selectedAddr.id,values.discountCode);
-        if (res.success) {
-          router.replace("/")
+        if (res.success && res.data?.order) {
+          router.replace(`${PAYMENT_SUCCESS_PATH}?order_id=${res.data.order.id}&paymentMethod=cod`);
         } else {
-          toast.error("COD order failed");
+          const failureMessage =
+            (!res.success && "error" in res ? res.error : undefined) ?? "COD order failed";
+          toast.error(failureMessage);
+          router.replace(`${PAYMENT_FAILURE_PATH}?paymentMethod=cod&reason=cod_checkout_failed`);
         }
       } 
       else {
         const res = await checkoutOnline(selectedAddr.id,values.discountCode);
         if (!res.success || !res.data) {
           toast.error("Failed to create order");
+          router.replace(`${PAYMENT_FAILURE_PATH}?paymentMethod=razorpay&reason=order_creation_failed`);
           return;
         }
 
@@ -168,6 +172,7 @@ export default function CheckoutPage() {
       } 
     } catch (err) {
       toast.error("Unexpected error");
+      router.replace(`${PAYMENT_FAILURE_PATH}?paymentMethod=${values.paymentMethod}&reason=unexpected_error`);
     } finally {
       setIsLoading(false);
     }
@@ -350,17 +355,32 @@ export default function CheckoutPage() {
                       {isLoading ? "Processing…" : "Pay now"}
                     </Button>
 
-                    {/* Footer Links */}
-                    <div className="flex justify-center gap-6 border-t border-gray-200 pt-6 text-xs text-gray-700 font-medium">
-                      <Link href="#" className="hover:text-gray-900 transition-colors">
-                        Refund policy
-                      </Link>
-                      <Link href="#" className="hover:text-gray-900 transition-colors">
-                        Privacy policy
-                      </Link>
-                      <Link href="#" className="hover:text-gray-900 transition-colors">
-                        Terms of service
-                      </Link>
+                    {/* Legal Links */}
+                    <div className="border-t border-gray-200 pt-6 text-center text-xs text-gray-600 leading-relaxed">
+                      <p>
+                        By placing your order, you agree to our{" "}
+                        <Link
+                          href="/terms"
+                          className="font-semibold text-gray-800 hover:text-black underline-offset-2 hover:underline"
+                        >
+                          Terms of Service
+                        </Link>{" "}
+                        and acknowledge our{" "}
+                        <Link
+                          href="/policies"
+                          className="font-semibold text-gray-800 hover:text-black underline-offset-2 hover:underline"
+                        >
+                          Privacy Policy
+                        </Link>{" "}
+                        and{" "}
+                        <Link
+                          href="/return-policies"
+                          className="font-semibold text-gray-800 hover:text-black underline-offset-2 hover:underline"
+                        >
+                          Return &amp; Refund Policy
+                        </Link>
+                        .
+                      </p>
                     </div>
                   </form>
                 </Form>

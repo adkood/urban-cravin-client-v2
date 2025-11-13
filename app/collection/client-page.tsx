@@ -7,10 +7,15 @@ import Marquee from "@/components/marque";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TOP_HEADER_MARQUEE_ITEMS } from "@/lib/constants";
-import { filterProductsAction, FilterProductsData, Product } from "@/data/product";
+import {
+  filterProductsAction,
+  FilterProductsData,
+  Product,
+} from "@/data/product";
 import { ChevronDown, Filter, X } from "lucide-react";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { Slider } from "@/components/ui/slider";
+import { useSearchParams } from "next/navigation";
 
 const sortOptions = [
   { value: "title-asc", label: "Alphabetically, A-Z" },
@@ -18,11 +23,6 @@ const sortOptions = [
   { value: "price-asc", label: "Price, low to high" },
   { value: "price-desc", label: "Price, high to low" },
 ];
-
-interface ProductPageProps {
-  categoryName?: string;
-  tagName?: string
-}
 
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
@@ -40,24 +40,38 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-export default function ProductPage({ categoryName, tagName }: ProductPageProps) {
+export default function ProductPage() {
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(0);
   const [isReady, setIsReady] = useState(false);
-
   // Filters
   const [sortBy, setSortBy] = useState("featured");
   const [showFilters, setShowFilters] = useState(false);
   const [tempPriceRange, setTempPriceRange] = useState({ min: 0, max: 5000 });
 
-const debouncedPriceRange = useDebounce(tempPriceRange, 500); // 500ms delay
+  const debouncedPriceRange = useDebounce(tempPriceRange, 500); // 500ms delay
+
+  const categoryQuery = searchParams.get("category")?.trim() || undefined;
+  const tagQuery = searchParams.get("tag")?.trim() || undefined;
 
   const pageSize = 9; // 3x3 grid
 
-  // Map slug → category name (you can expand this)
+  const displayName = useMemo(() => {
+    if (categoryQuery) {
+      return categoryQuery.replace(/-/g, " ").toUpperCase();
+    }
+    if (tagQuery) {
+      return `#${tagQuery.toUpperCase()}`;
+    }
+    return "All Products";
+  }, [categoryQuery, tagQuery]);
 
-  const collectionName = categoryName;
+  // Reset pagination when query changes
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [categoryQuery, tagQuery]);
 
   // Fetch products with filters & pagination
   const fetchProducts = useCallback(async () => {
@@ -65,10 +79,10 @@ const debouncedPriceRange = useDebounce(tempPriceRange, 500); // 500ms delay
       setIsReady(false);
 
       const res = (await filterProductsAction({
-        categoryName: categoryName??undefined,
+        categoryName: categoryQuery || undefined,
+        tags: tagQuery || undefined,
         page: currentPage,
         size: pageSize,
-        tags: tagName??undefined,
         minPrice: debouncedPriceRange.min,
         maxPrice: debouncedPriceRange.max,
       })) as FilterProductsData;
@@ -82,7 +96,7 @@ const debouncedPriceRange = useDebounce(tempPriceRange, 500); // 500ms delay
     } finally {
       setIsReady(true);
     }
-  }, [categoryName, currentPage, debouncedPriceRange]);
+  }, [categoryQuery, tagQuery, currentPage, debouncedPriceRange]);
 
   useEffect(() => {
     fetchProducts();
@@ -94,23 +108,23 @@ const debouncedPriceRange = useDebounce(tempPriceRange, 500); // 500ms delay
   };
 
   const sortedProducts = useMemo(() => {
-  if (!products.length) return [];
+    if (!products.length) return [];
 
-  const sorted = [...products];
+    const sorted = [...products];
 
-  if (sortBy === "title-asc") {
-    sorted.sort((a, b) => a.name.localeCompare(b.name));
-  } else if (sortBy === "title-desc") {
-    sorted.sort((a, b) => b.name.localeCompare(a.name));
-  } else if (sortBy === "price-asc") {
-    sorted.sort((a, b) => a.price - b.price);
-  } else if (sortBy === "price-desc") {
-    sorted.sort((a, b) => b.price - a.price);
-  } 
-  // "featured" = default order (no sort)
+    if (sortBy === "title-asc") {
+      sorted.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortBy === "title-desc") {
+      sorted.sort((a, b) => b.name.localeCompare(a.name));
+    } else if (sortBy === "price-asc") {
+      sorted.sort((a, b) => a.price - b.price);
+    } else if (sortBy === "price-desc") {
+      sorted.sort((a, b) => b.price - a.price);
+    }
+    // "featured" = default order (no sort)
 
-  return sorted;
-}, [products, sortBy]);
+    return sorted;
+  }, [products, sortBy]);
 
   // Full-section skeleton
   if (!isReady) {
@@ -163,13 +177,15 @@ const debouncedPriceRange = useDebounce(tempPriceRange, 500); // 500ms delay
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <a href="/" className="hover:text-foreground transition">Collection</a>
             <span>/</span>
-            <span className="text-foreground capitalize">{collectionName?.replace("-", " ")}</span>
+            <span className="text-foreground">
+              {displayName}
+            </span>
           </div>
         </div>
 
         {/* Title */}
         <div className="container mx-auto px-4 py-8 border-b border-border">
-          <h1 className="text-4xl font-bold mb-2 capitalize">{collectionName?.replace("-", " ")}</h1>
+          <h1 className="text-4xl font-bold mb-2">{displayName}</h1>
           <p className="text-muted-foreground">{products.length} products</p>
         </div>
 

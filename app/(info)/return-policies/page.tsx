@@ -28,7 +28,7 @@ export default function ReturnPolicyPage() {
             {[
               "Returns are accepted within 7 days of receiving your order.",
               "Items must be unused, unwashed, and in original packaging with tags attached.",
-              "To initiate a return, please contact us at support@urbancravin.com-873243.hostingersite.com with your order details.",
+              "To initiate a return, please contact us at support@urbancravin.com with your order details.",
               "Return shipping costs will be borne by the customer unless the item is defective or incorrect.",
               "Please ensure you review your order carefully before confirming your purchase.",
             ].map((item, index) => (
@@ -71,7 +71,7 @@ export default function ReturnPolicyPage() {
           <h2 className="mb-6 text-2xl font-semibold text-gray-900">Exchange Process</h2>
           <ul className="space-y-4">
             {[
-              "Contact us at support@urbancravin.com-873243.hostingersite.com within 3 days of delivery with order details and issue images.",
+              "Contact us at support@urbancravin.com within 3 days of delivery with order details and issue images.",
               "The item must be unused, unwashed, and with tags intact in its original packaging.",
               "Customers must bear the cost of shipping the item back for exchange.",
               "Once we receive and verify the returned item, we will process the exchange.",
@@ -96,7 +96,7 @@ export default function ReturnPolicyPage() {
           <ul className="space-y-3">
             {[
               "If an exchange is not possible, store credit may be provided at our discretion.",
-              "For exchange requests, contact support@urbancravin.com-873243.hostingersite.com.",
+              "For exchange requests, contact support@urbancravin.com.",
               "Refunds are not provided under any circumstances.",
             ].map((item, index) => (
               <li key={index} className="flex gap-3 text-gray-700">

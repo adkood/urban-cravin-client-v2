@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import axios, { isAxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { CLIENT_REGISTERURL } from "@/lib/urls";
@@ -35,7 +35,8 @@ const Signup = () => {
       password: "",
     },
     validationSchema: toFormikValidationSchema(signupSchema),
-    onSubmit: async (values) => {
+    onSubmit: async (values, { setSubmitting }) => {
+      setSubmitting(true)
       try {
         const resp = await axios.post<{
           status : string
@@ -58,6 +59,9 @@ const Signup = () => {
         else {
           toast.error(error?.message || "Something went wrong");
         }
+      }
+      finally {
+        setSubmitting(false)
       }
     },
   });
@@ -169,9 +173,17 @@ const Signup = () => {
 
           <button
             type="submit"
-            className="w-full py-3 bg-[#9b1e22] text-white text-sm font-semibold rounded-lg shadow-sm hover:bg-[#7d171b] active:scale-[0.98] transition-all duration-150"
+            disabled={formik.isSubmitting}
+            className="w-full py-3 bg-[#9b1e22] text-white text-sm font-semibold rounded-lg shadow-sm hover:bg-[#7d171b] disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98] transition-all duration-150"
           >
-            Create Account
+            {formik.isSubmitting ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Creating Account...
+              </span>
+            ) : (
+              "Create Account"
+            )}
           </button>
         </form>
 

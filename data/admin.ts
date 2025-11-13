@@ -271,6 +271,8 @@ export async function uploadProductImageAdmin({
       }
     }
 
+    console.log("isPrimary: ", isPrimary)
+
     const formData = new FormData()
     formData.append("file", file)
     formData.append("altText", altText)
@@ -535,7 +537,7 @@ export async function deleteReviewAdmin(
     const config = {
       method: "delete",
       maxBodyLength: Infinity,
-      url: `http://3.110.127.251:8080/api/reviews/${reviewId}`,
+      url: `${BASE_URL}/api/reviews/${reviewId}`,
       headers: {
         Authorization: token,
       },

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Package, Truck, CreditCard, AlertCircle } from "lucide-react"
 import { BASE_URL } from "@/lib/urls"
 import { Skeleton } from "./ui/skeleton"
+import Link from "next/link"
 
 export default function AccountOrders() {
   const [orders, setOrders] = useState<ApiOrder[]>([])
@@ -215,9 +216,12 @@ export default function AccountOrders() {
               <p className="text-gray-500 mb-4">
                 You haven’t placed any orders yet.
               </p>
+              <Link href="/">
               <Button className="bg-black text-white hover:bg-gray-800">
                 Start Shopping
               </Button>
+              </Link>
+              
             </div>
           )}
         </div>

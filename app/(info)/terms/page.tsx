@@ -164,7 +164,7 @@ export default function TermsPage() {
                 </span>
                 <span>
                   Customers must contact us within 3 days of receiving the order at
-                  support@urbancravin.com-873243.hostingersite.com with images of the issue.
+                  support@urbancravin.com with images of the issue.
                 </span>
               </li>
               <li className="flex gap-3">
@@ -217,11 +217,11 @@ export default function TermsPage() {
             <p className="text-gray-700">
               For any queries, contact us at{" "}
               <a
-                href="mailto:support@urbancravin.com-873243.hostingersite.com"
+                href="mailto:support@urbancravin.com"
                 className="font-semibold hover:underline"
                 style={{ color: "#9b1e22" }}
               >
-                support@urbancravin.com-873243.hostingersite.com
+                support@urbancravin.com
               </a>
             </p>
           </section>

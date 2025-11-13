@@ -1,9 +1,9 @@
 export const NAV_ITEMS = [
-    { label: 'BAGGY VEST',HREF : "/collection/baggy-vests" },
-    { label: 'OVERSIZED TEES',  badge: 'HOT',HREF : "/collection/oversized-tees"  },
-    { label: 'SWEATPANTS', HREF : "/collection/sweatpants" },
-    { label: 'DHH COLLECTION', badge : "New",HREF : "/collection/dhh"  },
-    { label: 'ABOUT US',HREF : "/about" }
+  { label: "BAGGY VEST", HREF: "/collection?category=BAGGY%20VESTs" },
+  { label: "OVERSIZED TEES", badge: "HOT", HREF: "/collection?category=OVERSIZED%20TEES" },
+  { label: "SWEATPANTS", HREF: "/collection?category=SWEATPANTS" },
+  { label: "DHH COLLECTION", badge: "New", HREF: "/collection?tag=dhh" },
+  { label: "ABOUT US", HREF: "/about" },
 ];
 
 export const TOP_HEADER_MARQUEE_ITEMS = [
@@ -22,7 +22,7 @@ export const COLLECTIONS = [
     title: 'BAGGY VESTs',
     buttonText: 'SHOP HERE',
     image: '/DSC_8376.JPG',
-    link: '/collection/baggy-vests',
+    link: '/collection?category=BAGGY%20VESTs',
     alt: 'Man wearing a pink cap'
   },
   {
@@ -31,7 +31,7 @@ export const COLLECTIONS = [
     title: 'SWEATPANTS',
     buttonText: 'SHOP HERE',
     image: '/k-1a.webp',
-    link: '/collection/sweatpants',
+    link: '/collection?category=SWEATPANTS',
     alt: 'Black ashtray in hand'
   },
   {
@@ -40,7 +40,7 @@ export const COLLECTIONS = [
     title: 'OVERSIZED TEES',
     buttonText: 'SHOP HERE',
     image: '/post2.webp',
-    link: '/collection/oversized-tees',
+    link: '/collection?category=OVERSIZED%20TEES',
     alt: 'Woman wearing pink t-shirt and plaid skirt'
   }
 ];

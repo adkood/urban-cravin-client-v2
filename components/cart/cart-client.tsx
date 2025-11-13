@@ -148,7 +148,6 @@ export default function CartClient({ initialData }: CartClientProps) {
         {cart.items.map((item) => {
           const product = item.product
           const displayPrice = item.unitPrice
-
           return (
             <div
               key={item.id}
@@ -162,7 +161,7 @@ export default function CartClient({ initialData }: CartClientProps) {
                   <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded">
                     <Link href={`/product/${product.id}`}>
                       <Image
-                        src={BASE_URL + product.images[0]}
+                        src={product.images[0] ? BASE_URL+product.images[0] : "/placeholder.svg"}
                         alt={product.name}
                         fill
                         className="object-contain"
@@ -217,7 +216,7 @@ export default function CartClient({ initialData }: CartClientProps) {
                   <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded">
                     <Link href={`/product/${product.id}`}>
                       <Image
-                        src={BASE_URL + product.images[0]}
+                        src={product.images[0] ? BASE_URL+product.images[0] : "/placeholder.svg"}
                         alt={product.name}
                         fill
                         className="object-contain"

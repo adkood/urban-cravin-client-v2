@@ -1,6 +1,6 @@
 
 import axios from "axios";
-import {  RETURNURLAFTERPAYMENT, VERIFY_PAYMENT_URL } from "./urls";
+import { PAYMENT_FAILURE_PATH, PAYMENT_SUCCESS_PATH, VERIFY_PAYMENT_URL } from "./urls";
 import { getAuthToken } from "@/data/cart";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
@@ -92,10 +92,14 @@ export const handleRazorpay = async ({
         );
 
         console.log("✅ Payment verified:", verifyResponse.data);
-        router.replace(`${RETURNURLAFTERPAYMENT}?order_id=${receipt}&payment_id=${response.razorpay_payment_id}&sessionId=${sessionId}`);
+        router.replace(
+          `${PAYMENT_SUCCESS_PATH}?order_id=${receipt}&payment_id=${response.razorpay_payment_id}&sessionId=${sessionId}`
+        );
       } catch (error) {
         console.error("❌ Payment verification failed:", error);
-        router.replace(`${RETURNURLAFTERPAYMENT}?order_id=${receipt}&payment_id=${response.razorpay_payment_id}&sessionId=${sessionId}`);
+        router.replace(
+          `${PAYMENT_FAILURE_PATH}?order_id=${receipt}&payment_id=${response.razorpay_payment_id}&sessionId=${sessionId}&reason=verification_failed`
+        );
         alert("Payment verification failed. Please contact support.");
       }
     },
@@ -112,6 +116,11 @@ export const handleRazorpay = async ({
   rzp.on("payment.failed", function (response: any) {
     alert("Payment Failed!");
     console.error(response.error);
+    const paymentId = response?.error?.metadata?.payment_id ?? "";
+    const orderId = response?.error?.metadata?.order_id ?? receipt;
+    router.replace(
+      `${PAYMENT_FAILURE_PATH}?order_id=${orderId}&payment_id=${paymentId}&sessionId=${sessionId}&reason=gateway_failed`
+    );
   });
 
   rzp.open();

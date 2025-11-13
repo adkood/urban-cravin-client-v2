@@ -18,12 +18,12 @@ const Footer = () => {
     setOpenSection(openSection === section ? null : section);
   };
 
-  const shopLinks = [
-    { label: "Baggy Vests", href: "/collection/baggy-vests" },
-    { label: "Oversized Tees", href: "/collection/oversized-tees" },
-    { label: "Sweatpants", href: "/collection/sweatpants" },
-    { label: "DHH Collection", href: "/collection/dhh" },
-  ];
+const shopLinks = [
+  { label: "Baggy Vests", href: "/collection?category=BAGGY%20VESTs" },
+  { label: "Oversized Tees", href: "/collection?category=OVERSIZED%20TEES" },
+  { label: "SWEATPANTS", href: "/collection?category=SWEATPANTS" },
+  { label: "DHH Collection", href: "/collection?tag=dhh" },
+];
 
   const brandLinks = [
     { label: "About Us", href: "/about" },
@@ -214,7 +214,7 @@ const Footer = () => {
 
             {/* Legal Links */}
             <div className="flex flex-wrap items-center justify-center gap-1 text-sm text-center">
-              <a href="/privacy-policy" className="hover:underline">
+              <a href="/policies" className="hover:underline">
                 Privacy Policy
               </a>
               <span className="px-1">•</span>
