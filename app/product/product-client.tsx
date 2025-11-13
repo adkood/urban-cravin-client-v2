@@ -12,16 +12,71 @@ import { addToCart } from "@/data/cart";
 import type { Product } from "@/data/product";
 import { useCartStore } from "@/stores/cartStore";
 
-type SizesType = "S" | "M" | "L" | "XL";
+const sizeOrder = ["XXXS","XXS","XS","S","M","L","XL","XXL","XXXL","XXXXL","XXXXXL","5XL","6XL"];
+const UnitOrder = ["waist","chest","hip","bust"];
+
+function normalizeSize(size: string): number {
+  const normalizedSize = size.trim().toUpperCase();
+
+  const match = normalizedSize.match(/(\d+(\.\d+)?)(\/(\d+(\.\d+)?))?/);
+  if (match) {
+    if (match[4]) {
+      const numerator = parseFloat(match[1]);
+      const denominator = parseFloat(match[4]);
+      return numerator / denominator;
+    }
+    return parseFloat(match[1]);
+  }
+
+  const order = sizeOrder.indexOf(normalizedSize);
+  if (order !== -1) {
+    return order + 100; // Offset to ensure numeric sizes come first
+  }
+
+  const unitMatch = normalizedSize.match(new RegExp(UnitOrder.join("|"), "i"));
+  if (unitMatch) {
+    return sizeOrder.length + UnitOrder.indexOf(unitMatch[0].toLowerCase()) + 200;
+  }
+
+  return Number.MAX_SAFE_INTEGER;
+}
+
+function sortSizeLabels(a: string, b: string): number {
+  const normalizedA = normalizeSize(a);
+  const normalizedB = normalizeSize(b);
+
+  if (normalizedA !== normalizedB) {
+    return normalizedA - normalizedB;
+  }
+
+  return a.localeCompare(b);
+}
 
 export default function ProductClient({ product }: { product: Product }) {
-  const [selectedSize, setSelectedSize] = useState<SizesType>("M");
+  const sortedSizes = [...product.availableSizes].sort(sortSizeLabels);
+
+  const [selectedSize, setSelectedSize] = useState<string>(
+    () => sortedSizes[0] ?? ""
+  );
   const [quantity, setQuantity] = useState<number>(1);
   const [isFavorite, setIsFavorite] = useState(false);
   const [showSizeChart, setShowSizeChart] = useState(false);
   const [isPending, startTransition] = useTransition();
   const setCart = useCartStore((state) => state.setCart);
   const [timeRemaining, setTimeRemaining] = useState({ hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    if (sortedSizes.length === 0) {
+      setSelectedSize("");
+      return;
+    }
+
+    setSelectedSize((current) =>
+      current && sortedSizes.includes(current)
+        ? current
+        : sortedSizes[0]
+    );
+  }, [sortedSizes]);
 
   // Calculate dates dynamically
   const today = new Date();
@@ -171,10 +226,10 @@ useEffect(() => {
               </button>
             </div>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-              {product.availableSizes.map((size) => (
+              {sortedSizes.map((size) => (
                 <button
                   key={size}
-                  onClick={() => setSelectedSize(size as SizesType)}
+                  onClick={() => setSelectedSize(size)}
                   className={`py-2 sm:py-3 px-3 sm:px-4 border-2 rounded-lg text-sm sm:text-base font-medium transition ${
                     selectedSize === size
                       ? "border-primary bg-primary text-primary-foreground"
@@ -235,7 +290,7 @@ useEffect(() => {
             size="lg"
             className="w-full h-11 sm:h-12 text-sm sm:text-base font-semibold"
             onClick={handleAddToCart}
-            disabled={isPending}
+            disabled={isPending || !selectedSize}
           >
             {isPending ? "Adding..." : "Add to Cart"}
           </Button>
