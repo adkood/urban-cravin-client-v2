@@ -13,7 +13,7 @@ const faqs = [
     icon: Package,
     question: "Can I exchange a product for a different size?",
     answer:
-      "Yes! If you need an exchange due to a size issue, email us at support@beige-swallow-873243.hostingersite.com",
+      "Yes! If you need an exchange due to a size issue, email us at support@urbancravin.com",
   },
   {
     icon: Heart,

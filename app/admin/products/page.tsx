@@ -1,10 +1,12 @@
+"use server"
+
 import Header from "@/components/common/header"
 import Footer from "@/components/common/footer"
 import { getUserDetails } from "@/data/user"
 import { redirect } from "next/navigation"
-import AdminOrdersPage from "./page-client"
+import AdminProductsClientPage from "./page-client"
 
-export default async function AdminPage() {
+export default async function AdminProductsPage() {
   const res = await getUserDetails()
 
   if (!res.success || !res.data?.user) {
@@ -13,17 +15,16 @@ export default async function AdminPage() {
 
   const user = res.data.user
 
-  console.log(user)
-
   if (user.role !== "ROLE_ADMIN") {
-    redirect("/") 
+    redirect("/")
   }
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <AdminOrdersPage/>
+      <AdminProductsClientPage />
       <Footer />
     </div>
   )
 }
+

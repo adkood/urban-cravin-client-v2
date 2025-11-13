@@ -39,12 +39,31 @@ export default function UserAvatar() {
 
   const { username } = data.user;
   const initials = username.slice(0, 2).toUpperCase();
+  const isAdmin = data.user.role?.toUpperCase().includes("ADMIN");
 
   return (
-    <Link href="/account" className="relative">
-      <div className="w-10 h-10 rounded-full flex items-center justify-center text-black bg-[#e5e7eb] font-bold">
-        {initials}
-      </div>
-    </Link>
+    <div className="flex items-center gap-3">
+      <Link href="/account" className="relative">
+        <div className="w-10 h-10 rounded-full flex items-center justify-center text-black bg-[#e5e7eb] font-bold">
+          {initials}
+        </div>
+      </Link>
+      {isAdmin && (
+        <div className="flex flex-col gap-1 text-xs font-medium text-black">
+          <Link
+            href="/admin"
+            className="hover:underline"
+          >
+            Admin Orders
+          </Link>
+          <Link
+            href="/admin/products"
+            className="hover:underline"
+          >
+            Admin Products
+          </Link>
+        </div>
+      )}
+    </div>
   );
 }

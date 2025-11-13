@@ -121,6 +121,7 @@ export interface Product {
   avgRating: number;
   reviewCount: number;
   availableSizes: string[];
+  tags?: string[];
 }
 
 export interface FilterProductsData {

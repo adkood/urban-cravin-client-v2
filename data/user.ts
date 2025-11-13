@@ -394,7 +394,7 @@ export async function getUserDetails(): Promise<ActionResponse<ApiUserDetailsRes
     const config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: `http://3.110.127.251:8080/api/users/details`,
+      url: `${BASE_URL}/api/users/details`,
       headers: {
         Authorization: token,
       },

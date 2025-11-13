@@ -129,10 +129,10 @@ export default function PoliciesPage() {
               <p className="text-neutral-700 leading-relaxed">
                 You can request access, correction, or deletion of your data by contacting{" "}
                 <a
-                  href="mailto:support@beige-swallow-873243.hostingersite.com"
+                  href="mailto:support@urbancravin.com-873243.hostingersite.com"
                   className="text-[#9b1e22] hover:underline"
                 >
-                  support@beige-swallow-873243.hostingersite.com
+                  support@urbancravin.com-873243.hostingersite.com
                 </a>
                 .
               </p>
@@ -156,10 +156,10 @@ export default function PoliciesPage() {
               <p className="text-neutral-600 text-sm">
                 For any privacy concerns, contact{" "}
                 <a
-                  href="mailto:support@beige-swallow-873243.hostingersite.com"
+                  href="mailto:support@urbancravin.com-873243.hostingersite.com"
                   className="text-[#9b1e22] hover:underline"
                 >
-                  support@beige-swallow-873243.hostingersite.com
+                  support@urbancravin.com-873243.hostingersite.com
                 </a>
                 .
               </p>
@@ -224,10 +224,10 @@ export default function PoliciesPage() {
               <p className="text-neutral-600 text-sm">
                 For shipping-related queries, email us at{" "}
                 <a
-                  href="mailto:support@beige-swallow-873243.hostingersite.com"
+                  href="mailto:support@urbancravin.com-873243.hostingersite.com"
                   className="text-[#9b1e22] hover:underline"
                 >
-                  support@beige-swallow-873243.hostingersite.com
+                  support@urbancravin.com-873243.hostingersite.com
                 </a>
                 .
               </p>
