@@ -30,11 +30,11 @@ export function middleware(req: NextRequest) {
         Buffer.from(payloadBase64, "base64").toString("utf8")
       );
 
-      const isExpired = jsonPayload.exp * 1000 < Date.now();
+      // const isExpired = jsonPayload.exp * 1000 < Date.now();
 
-      if (isExpired) {
-        return NextResponse.redirect(new URL("/login?expired=1", req.url));
-      }
+      // if (isExpired) {
+      //   return NextResponse.redirect(new URL("/login?expired=1", req.url));
+      // }
 
     } catch (err) {
       console.error("JWT decode failed:", err);

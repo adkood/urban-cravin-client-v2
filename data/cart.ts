@@ -62,7 +62,7 @@ export async function getCart(): Promise<ActionResponse<GetCartResponse>> {
     if (!token) {
       return {
         success: false,
-        error: "Unauthorized - Login to proceed",
+        error: "Please Login to proceed",
       }
     }
 
